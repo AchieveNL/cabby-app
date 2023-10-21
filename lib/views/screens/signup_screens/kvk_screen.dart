@@ -25,7 +25,13 @@ class KvkScreen extends StatefulWidget {
 }
 
 class _KvkScreenState extends State<KvkScreen> {
-  dynamic kvkFile;
+  late File? kvkFile;
+
+  @override
+  void initState() {
+    super.initState();
+    kvkFile = widget.kvkData.kvkFile;
+  }
 
   void pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(

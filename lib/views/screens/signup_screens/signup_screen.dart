@@ -1,4 +1,3 @@
-
 import 'package:cabby/config/theme.dart';
 import 'package:cabby/models/signup.dart';
 import 'package:cabby/views/screens/signup_screens/driver_license.dart';
@@ -30,7 +29,6 @@ class _SignupScreenState extends State<SignupScreen> {
   SignupKvk kvkData = SignupKvk();
   SignupKawi kawiData = SignupKawi();
   SignupSignature signatureData = SignupSignature();
-
 
   String nextBtnTitle = "Next";
 
@@ -96,11 +94,9 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
         RentalPolicy(
           signatureData: signatureData, // Assuming RentalPolicy needs it
-          dataCallback: (data) => setState(() => signatureData = data),
           btnCallback: updateButton,
         ),
       ];
-
 
   @override
   Widget build(BuildContext context) {
@@ -224,12 +220,11 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-
   void gotoStep(int step) {
     if (step < stepWidgets.length && step < _currentStep) {
       setState(() {
         _currentStep = step;
-        isButtonDisabled = true; // You may adjust this logic if needed
+        isButtonDisabled = true;
       });
       scrollToCurrentStep();
     }
@@ -237,7 +232,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void scrollToCurrentStep() {
     final screenWidth = MediaQuery.of(context).size.width;
-    final estimatedStepWidth = screenWidth / 4; // adjust based on your UI
+    final estimatedStepWidth = screenWidth / 4;
     final offset = (_currentStep * estimatedStepWidth) -
         (screenWidth / 2) +
         (estimatedStepWidth / 2);
@@ -247,12 +242,6 @@ class _SignupScreenState extends State<SignupScreen> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
-  }
-
-  void updateSignupData(SignupData data) {
-    setState(() {
-      signupData = data;
-    });
   }
 
   void updateButton({required String title, required bool isDisabled}) {
@@ -271,9 +260,8 @@ class _SignupScreenState extends State<SignupScreen> {
           builder: (context) => SignatureScreen(
             onSignatureComplete: (signatureUrl) {
               setState(() {
-                signupData.signature = signatureUrl;
+                signatureData = SignupSignature()..signature = signatureUrl;
               });
-              print("Received Signature URL: $signatureUrl");
             },
           ),
         ),

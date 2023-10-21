@@ -23,15 +23,15 @@ class SignupDriverLicence {
 }
 
 class SignupPermitDetails {
-  dynamic taxiPermitFile;
+  File? taxiPermitFile;
 }
 
 class SignupKvk {
-  dynamic kvkFile;
+  File? kvkFile;
 }
 
 class SignupKawi {
-  dynamic kawiFile;
+  File? kawiFile;
 }
 
 class SignupSignature {
