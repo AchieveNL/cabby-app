@@ -1,7 +1,8 @@
-import 'package:cabby/config/theme.dart';
+import 'package:cabby/state/app_provider.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/on_boarding_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({super.key});
@@ -52,7 +53,10 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: null,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+      ),
       body: Column(
         children: [
           Expanded(
@@ -78,7 +82,12 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 ? 'Get Started'
                 : 'Next',
             onPressed: currentIndex == onboardingPages.length - 1
-                ? () => Navigator.of(context).pushReplacementNamed("/login")
+                ? () async {
+                    final appProvider =
+                        Provider.of<AppProvider>(context, listen: false);
+                    await appProvider.markOnboardingAsSeen();
+                    Navigator.of(context).pushReplacementNamed("/login");
+                  }
                 : () => _pageController.nextPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
@@ -87,26 +96,16 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           const SizedBox(height: 15),
           currentIndex == onboardingPages.length - 1
               ? const SizedBox.shrink()
-              : OutlinedButton(
+              : SecondaryButton(
+                  width: size.width * 0.9,
+                  height: 50,
                   onPressed: () =>
                       Navigator.of(context).pushReplacementNamed("/login"),
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(
-                      width: 1.0,
-                      color: AppColors.primaryColor,
-                    ),
-                    fixedSize: const Size.fromHeight(50),
-                  ),
-                  child: const Text(
-                    'Skip',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
+                  btnText: "Skip",
                 ),
-          const SizedBox(height: 15),
+          const SizedBox(
+            height: 32,
+          ),
         ],
       ),
     );

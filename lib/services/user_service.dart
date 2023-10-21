@@ -12,7 +12,7 @@ class UserService {
 
   UserService()
       : _dio = Dio(BaseOptions(
-          baseUrl: Config.baseUrl,
+          baseUrl: '${AppConfig.apiUrl}/users',
           headers: {'Content-Type': 'application/json'},
         )) {
     _dio.interceptors.add(CookieManager(_cookieJar));
@@ -28,7 +28,7 @@ class UserService {
 
   Future<Map<String, dynamic>> signup(String email, String password) async {
     final response = await _dio.post(
-      '/users/signup',
+      '/signup',
       data: {'email': email, 'password': password},
     );
     return _processResponse(response);
@@ -36,7 +36,7 @@ class UserService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     final response = await _dio.post(
-      '/users/mobile-login',
+      '/mobile-login',
       data: {'email': email, 'password': password},
     );
     if (response.statusCode == 200) {
@@ -54,7 +54,7 @@ class UserService {
 
   Future<Map<String, dynamic>> verifyOtp(String email, String otp) async {
     final response = await _dio.post(
-      '/users/verify-otp',
+      '/verify-otp',
       data: {'email': email, 'otp': otp},
     );
     return _processResponse(response);
@@ -63,24 +63,24 @@ class UserService {
   Future<Map<String, dynamic>> resetPassword(
       String email, String newPassword) async {
     final response = await _dio.post(
-      '/users/reset-password',
+      '/reset-password',
       data: {'email': email, 'newPassword': newPassword},
     );
     return _processResponse(response);
   }
 
   Future<Map<String, dynamic>> deleteUser() async {
-    final response = await _dio.delete('/users/delete-account');
+    final response = await _dio.delete('/delete-account');
     return _processResponse(response);
   }
 
   Future<Map<String, dynamic>> fetchCurrentUser() async {
-    final response = await _dio.get('/users/current');
+    final response = await _dio.get('/current');
     return _processResponse(response);
   }
 
   Future<Map<String, dynamic>> fetchUserById(String id) async {
-    final response = await _dio.get('/users/$id');
+    final response = await _dio.get('/$id');
     return _processResponse(response);
   }
 }

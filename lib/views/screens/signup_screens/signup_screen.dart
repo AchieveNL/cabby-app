@@ -1,6 +1,6 @@
-import 'dart:io';
 
 import 'package:cabby/config/theme.dart';
+import 'package:cabby/models/signup.dart';
 import 'package:cabby/views/screens/signup_screens/driver_license.dart';
 import 'package:cabby/views/screens/signup_screens/email_password.dart';
 import 'package:cabby/views/screens/signup_screens/kawi_screen.dart';
@@ -13,38 +13,6 @@ import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/material.dart';
 
-class SignupData {
-  // For EmailPassword widget
-  String? email;
-  String? password;
-  String? confirmPassword;
-
-  // For ProfileDetails widget
-  String? name;
-  String? phone;
-  String? zip;
-  String? street;
-  String? location;
-  DateTime? dob;
-  String? city;
-
-  // For DriverLicenceScreen widget
-  File? driverLicenseFront;
-  File? driverLicenseBack;
-
-  // For PermitDetails widget
-  dynamic taxiPermitFile;
-
-  // For KvkScreen widget
-  dynamic kvkFile;
-
-  // For KawiScreen widget
-  dynamic kawiFile;
-
-  // For Signature widget
-  File? signatureImage;
-}
-
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
 
@@ -54,9 +22,35 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   int _currentStep = 0;
-  SignupData signupData = SignupData();
+
+  SignupEmailPassword emailPasswordData = SignupEmailPassword();
+  SignupProfile profileData = SignupProfile();
+  SignupDriverLicence driverLicenceData = SignupDriverLicence();
+  SignupPermitDetails permitDetailsData = SignupPermitDetails();
+  SignupKvk kvkData = SignupKvk();
+  SignupKawi kawiData = SignupKawi();
+  SignupSignature signatureData = SignupSignature();
+
+
   String nextBtnTitle = "Next";
-  bool isButtonDisabled = true; // Button is disabled by default
+
+  bool isButtonLoading = false;
+  bool isButtonDisabled = true;
+  bool showNextBtn = true;
+
+  late ScrollController stepIndicatorController;
+
+  @override
+  void initState() {
+    super.initState();
+    stepIndicatorController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    stepIndicatorController.dispose();
+    super.dispose();
+  }
 
   final List<String> stepTitles = [
     "Login access",
@@ -71,34 +65,42 @@ class _SignupScreenState extends State<SignupScreen> {
 
   List<Widget> get stepWidgets => [
         EmailPassword(
-          dataCallback: updateSignupData,
+          emailPasswordData: emailPasswordData,
+          dataCallback: (data) => setState(() => emailPasswordData = data),
           btnCallback: updateButton,
         ),
         ProfileDetails(
-          dataCallback: updateSignupData,
+          profileData: profileData,
+          dataCallback: (data) => setState(() => profileData = data),
           btnCallback: updateButton,
         ),
         DriverLicenceScreen(
-          dataCallback: updateSignupData,
+          driverLicenceData: driverLicenceData,
+          dataCallback: (data) => setState(() => driverLicenceData = data),
           btnCallback: updateButton,
         ),
         PermitDetails(
-          dataCallback: updateSignupData,
+          permitDetailsData: permitDetailsData,
+          dataCallback: (data) => setState(() => permitDetailsData = data),
           btnCallback: updateButton,
         ),
         KvkScreen(
-          dataCallback: updateSignupData,
+          kvkData: kvkData,
+          dataCallback: (data) => setState(() => kvkData = data),
           btnCallback: updateButton,
         ),
         KawiScreen(
-          dataCallback: updateSignupData,
+          kawiData: kawiData,
+          dataCallback: (data) => setState(() => kawiData = data),
           btnCallback: updateButton,
         ),
         RentalPolicy(
-          dataCallback: updateSignupData,
+          signatureData: signatureData, // Assuming RentalPolicy needs it
+          dataCallback: (data) => setState(() => signatureData = data),
           btnCallback: updateButton,
         ),
       ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +129,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: screenSize.height * 0.02),
                     const Text(
                       'Enter your account credentials to sign up',
                       style: TextStyle(
@@ -135,7 +137,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         fontSize: 16,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: screenSize.height * 0.02),
                     buildStepIndicator(),
                   ],
                 ),
@@ -163,11 +165,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       PrimaryButton(
                         width: screenSize.width * 0.9,
                         height: 50,
-                        // isLoading: true,
-                        // isDisabled: true,
+                        isLoading: isButtonLoading,
+                        // isDisabled: isButtonDisabled,
                         btnText: nextBtnTitle,
                         onPressed: onNext,
-                      )
+                      ),
+                      SizedBox(height: screenSize.height * 0.02),
                     ],
                   ),
                 ),
@@ -182,26 +185,67 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget buildStepIndicator() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
+      controller: stepIndicatorController,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(stepTitles.length, (index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5.0),
-            child: Opacity(
-              opacity: _currentStep == index ? 1.0 : 0.5,
-              child: Text(
-                stepTitles[index],
-                style: TextStyle(
-                  color: AppColors.whiteColor,
-                  fontWeight: _currentStep == index
-                      ? FontWeight.bold
-                      : FontWeight.normal,
+          return InkWell(
+            onTap: () => gotoStep(index),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              child: Opacity(
+                opacity: _currentStep == index ? 1.0 : 0.5,
+                child: Row(
+                  children: [
+                    Text(
+                      stepTitles[index],
+                      style: TextStyle(
+                        color: AppColors.whiteColor,
+                        fontWeight: _currentStep == index
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      "·",
+                      style: TextStyle(
+                        color: AppColors.whiteColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
           );
         }),
       ),
+    );
+  }
+
+
+  void gotoStep(int step) {
+    if (step < stepWidgets.length && step < _currentStep) {
+      setState(() {
+        _currentStep = step;
+        isButtonDisabled = true; // You may adjust this logic if needed
+      });
+      scrollToCurrentStep();
+    }
+  }
+
+  void scrollToCurrentStep() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final estimatedStepWidth = screenWidth / 4; // adjust based on your UI
+    final offset = (_currentStep * estimatedStepWidth) -
+        (screenWidth / 2) +
+        (estimatedStepWidth / 2);
+
+    stepIndicatorController.animateTo(
+      offset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
   }
 
@@ -225,8 +269,12 @@ class _SignupScreenState extends State<SignupScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => SignatureScreen(
-            dataCallback: updateSignupData,
-            btnCallback: updateButton,
+            onSignatureComplete: (signatureUrl) {
+              setState(() {
+                signupData.signature = signatureUrl;
+              });
+              print("Received Signature URL: $signatureUrl");
+            },
           ),
         ),
       );
@@ -234,8 +282,10 @@ class _SignupScreenState extends State<SignupScreen> {
     if (_currentStep < stepWidgets.length - 1) {
       setState(() {
         _currentStep++;
-        isButtonDisabled = true; // Disable the button for the next step
+        isButtonDisabled = true;
       });
+
+      scrollToCurrentStep();
     }
     // Handle final submission or navigation if you've reached the last step...
   }

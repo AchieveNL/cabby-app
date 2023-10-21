@@ -1,15 +1,22 @@
 import 'dart:io';
 import 'package:cabby/config/theme.dart';
-import 'package:cabby/views/screens/signup_screens/signup_screen.dart';
+import 'package:cabby/models/signup.dart';
+import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class KawiScreen extends StatefulWidget {
-  final Function(SignupData) dataCallback;
-  final Function btnCallback;
+  final Function(SignupKawi) dataCallback;
+  final Function({required String title, required bool isDisabled}) btnCallback;
+  final SignupKawi kawiData;
 
-  const KawiScreen({Key? key, required this.dataCallback, required this.btnCallback})
+  const KawiScreen({
+    Key? key,
+    required this.dataCallback,
+    required this.btnCallback,
+    required this.kawiData,
+  })
       : super(key: key);
 
   @override
@@ -17,8 +24,14 @@ class KawiScreen extends StatefulWidget {
 }
 
 class _KawiScreenState extends State<KawiScreen> {
-  dynamic kawiFile;
+  late dynamic kawiFile;
   String? fileSizeError;
+
+  @override
+  void initState() {
+    super.initState();
+    kawiFile = widget.kawiData.kawiFile;
+  }
 
   static const double maxFileSizeInMB = 5.0;
 
@@ -43,7 +56,7 @@ class _KawiScreenState extends State<KawiScreen> {
           fileSizeError = null;
         });
         // Updating SignupData
-        widget.dataCallback(SignupData()..kawiFile= kawiFile);
+        widget.dataCallback(SignupKawi()..kawiFile = kawiFile);
         // Enabling the Next button after a successful file upload.
         widget.btnCallback(title: "Next", isDisabled: false);
       }
@@ -89,7 +102,7 @@ class _KawiScreenState extends State<KawiScreen> {
     if (kawiFile != null) {
       return _buildFileRow();
     } else {
-      return _buildUploadButton(screenSize);
+      return _buildUploadButton();
     }
   }
 
@@ -112,24 +125,18 @@ class _KawiScreenState extends State<KawiScreen> {
     );
   }
 
-  OutlinedButton _buildUploadButton(Size screenSize) {
-    return OutlinedButton.icon(
-      onPressed: pickFile,
-      style: ButtonStyle(
-        iconColor:
-            MaterialStateColor.resolveWith((states) => AppColors.primaryColor),
-        iconSize: MaterialStateProperty.all(24),
-      ),
-      icon: SvgPicture.asset(
-        'assets/document-text.svg',
-        color: AppColors.primaryColor,
-      ),
-      label: const Text(
-        'Upload File',
-        style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-            color: AppColors.primaryColor),
+  Widget _buildUploadButton() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: SecondaryButtonWithIcon(
+        btnText: 'Upload File',
+        btnIcon: SvgPicture.asset(
+          'assets/document-text.svg',
+          color: AppColors.primaryColor,
+        ), // Change to the icon you want
+        onPressed: pickFile,
+        isLoading: false,
+        isDisabled: false,
       ),
     );
   }

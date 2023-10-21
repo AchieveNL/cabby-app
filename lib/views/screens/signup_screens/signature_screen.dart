@@ -1,18 +1,20 @@
-import 'package:cabby/views/screens/signup_screens/signup_screen.dart';
+import 'package:cabby/services/profile_service.dart';
+import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:signature/signature.dart';
 
+typedef SignatureCallback = void Function(String signatureUrl);
+
 class SignatureScreen extends StatefulWidget {
-  final Function(SignupData) dataCallback;
-  final Function({required String title, required bool isDisabled}) btnCallback;
+  final SignatureCallback onSignatureComplete;
 
   const SignatureScreen({
     Key? key,
-    required this.dataCallback,
-    required this.btnCallback,
+    required this.onSignatureComplete,
   }) : super(key: key);
 
   @override
@@ -21,11 +23,11 @@ class SignatureScreen extends StatefulWidget {
 
 class _SignatureScreenState extends State<SignatureScreen> {
   bool _loading = false;
+  final profileService = ProfileService();
   final SignatureController _controller = SignatureController(
     penStrokeWidth: 5,
-    penColor: Colors.black, // Set pen color to black
-    exportBackgroundColor:
-        Colors.transparent, // Set background color to transparent
+    penColor: Colors.black,
+    exportBackgroundColor: Colors.transparent,
   );
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
@@ -52,6 +54,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
   }
 
   void _onChangeTab(String newTab) {
+    print(newTab);
     if (newTab == 'Select') {
       _selectSignatureFromGallery();
     } else {
@@ -62,18 +65,40 @@ class _SignatureScreenState extends State<SignatureScreen> {
   }
 
   Future<void> _selectSignatureFromGallery() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _selectedImage = File(image.path);
-        _selectedTab = 'Select';
-      });
-    } else {
-      print('No image selected.');
+    // Request permissions before accessing the gallery
+    var permissionStatus = await Permission.photos.request();
+
+    print(permissionStatus);
+
+    if (permissionStatus.isGranted) {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        // Check if the image is PNG format
+        if (image.path.split(".").last.toLowerCase() == 'png') {
+          setState(() {
+            _selectedImage = File(image.path);
+            _selectedTab = 'Select';
+            _isUseBtnDisabled =
+                false; // User has selected a valid image, so enable the "Use Signature" button
+          });
+        } else {
+          // Inform user that only PNG images are allowed
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Please select a PNG image.")),
+          );
+        }
+      }
+    } else if (permissionStatus.isPermanentlyDenied) {
+      // The user opted to never again see the permission request dialog for this
+      // app. The only way to change the permissions now is to manually
+      // do it in the system settings.
+      // openAppSettings();
     }
   }
 
   Future<void> _useSignature(double width, double height) async {
+    File? signatureFile;
+
     if (_selectedTab == 'Draw') {
       _toggleLoading();
       final img = await _controller.toPngBytes(
@@ -83,13 +108,27 @@ class _SignatureScreenState extends State<SignatureScreen> {
           '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.png';
       final file = File(filePath);
       file.writeAsBytesSync(img!);
-      widget.dataCallback(SignupData()..signatureImage = file);
-      widget.btnCallback(title: "Submit", isDisabled: false);
+      signatureFile = file;
     } else {
-      widget.dataCallback(SignupData()..signatureImage = _selectedImage);
-      widget.btnCallback(title: "Submit", isDisabled: false);
+      signatureFile = File(_selectedImage!.path);
     }
-    Navigator.of(context).pop();
+
+    try {
+      final response =
+          await profileService.createRentalAgreement(signatureFile);
+      print("Successfully uploaded the signature: $response");
+
+      if (response.containsKey('payload') &&
+          response['payload'].containsKey('url')) {
+        widget.onSignatureComplete(response['payload']['url']);
+      }
+      Navigator.of(context).pop();
+    } catch (e) {
+      print("Error uploading the signature: $e");
+    }
+
+    // widget.btnCallback(title: "Submit", isDisabled: false);
+    // Navigator.of(context).pop();
   }
 
   void _toggleLoading() {
@@ -116,7 +155,8 @@ class _SignatureScreenState extends State<SignatureScreen> {
         child: GestureDetector(
           onTap: () => Navigator.of(context).pop(),
           child: const Icon(
-            Icons.arrow_back, // Simplified the back arrow for clarity
+            Icons
+                .arrow_back_ios_new_rounded, // Simplified the back arrow for clarity
             color: Colors.black,
           ),
         ),
@@ -134,6 +174,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
   }
 
   Widget _buildBody(Size size) {
+    Size screenSize = MediaQuery.of(context).size;
     return Center(
       child: Container(
         width: size.width * .8,
@@ -143,9 +184,13 @@ class _SignatureScreenState extends State<SignatureScreen> {
           child: Column(
             children: [
               _buildTabs(),
+              SizedBox(height: screenSize.height * 0.02),
               _buildSignatureContainer(size),
+              SizedBox(height: screenSize.height * 0.02),
               _buildInstructionText(),
+              SizedBox(height: screenSize.height * 0.02),
               _buildLoadingOrUseButton(size),
+              SizedBox(height: screenSize.height * 0.02),
               _buildDeleteButton(size),
             ],
           ),
@@ -206,12 +251,12 @@ class _SignatureScreenState extends State<SignatureScreen> {
               child: Signature(
                 controller: _controller,
                 width: 300,
-                height: size.height / 2,
+                height: size.height / 3,
                 backgroundColor: Colors.transparent,
               ),
             ),
           )
-        : Container(
+        : SizedBox(
             width: size.width,
             height: size.height * 0.6,
             child: _selectedImage != null
@@ -219,7 +264,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
                     crossAxisCount: 3,
                     children: [Image.file(_selectedImage!)],
                   )
-                : Center(child: Text('No image selected')),
+                : const Center(child: Text('No image selected')),
           );
   }
 
@@ -235,64 +280,31 @@ class _SignatureScreenState extends State<SignatureScreen> {
   }
 
   Widget _buildLoadingOrUseButton(Size size) {
-    return _loading
-        ? const CircularProgressIndicator()
-        : Container(
-            margin: const EdgeInsets.only(top: 30, bottom: 10),
-            width: size.width * .7,
-            height: 48,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(4)),
-              color: Colors.blue, // Assuming this is your primary color
-            ),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue, // Assuming this is your primary color
-              ),
-              onPressed: _isUseBtnDisabled
-                  ? null
-                  : () => _useSignature(size.width, size.height * 0.6),
-              child: const Text(
-                'Use Signature',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          );
+    return PrimaryButton(
+      btnText: 'Use Signature',
+      width: size.width * .7,
+      height: 48,
+      isLoading: _loading,
+      isDisabled: _isUseBtnDisabled,
+      onPressed: () => _useSignature(size.width, size.height * 0.6),
+    );
   }
 
   Widget _buildDeleteButton(Size size) {
-    return GestureDetector(
-      onTap: () {
+    return SecondaryButton(
+      btnText: 'Delete Signature',
+      width: size.width * .7,
+      height: 48,
+      onPressed: () {
         if (_selectedTab == 'Draw') {
           _controller.clear();
-          setState(() {
-            _isUseBtnDisabled = true;
-          });
         } else {
-          setState(() {
-            _selectedImage = null;
-            _isUseBtnDisabled = true;
-          });
+          _selectedImage = null;
         }
+        setState(() {
+          _isUseBtnDisabled = true;
+        });
       },
-      child: Container(
-        width: size.width * .7,
-        height: 48,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(4)),
-          border: Border.all(
-              color: Colors.blue,
-              width: 1), // Assuming this is your primary color
-        ),
-        child: Center(
-          child: Text(
-            'Delete Signature',
-            style: TextStyle(
-              color: Colors.blue, // Assuming this is your primary color
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

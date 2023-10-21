@@ -90,8 +90,8 @@ class SecondaryButton extends StatelessWidget {
         child: OutlinedButton(
           onPressed: isDisabled ? null : onPressed,
           style: OutlinedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            primary: AppColors.primaryColor, // Text color
+            foregroundColor: AppColors.primaryColor,
+            backgroundColor: Colors.transparent, // Text color
             side: BorderSide(
               color: isDisabled ? Colors.grey : AppColors.primaryColor, // Border color
               width: 2,
@@ -116,6 +116,80 @@ class SecondaryButton extends StatelessWidget {
     );
   }
 }
+
+class SecondaryButtonWithIcon extends SecondaryButton {
+  final Widget? btnIcon; // New Icon data
+
+  const SecondaryButtonWithIcon({
+    Key? key,
+    required String btnText,
+    double height = 50,
+    double? width,
+    double radius = 25,
+    double btnTextSize = 16,
+    bool isLoading = false,
+    bool isDisabled = false,
+    this.btnIcon, // Icon Constructor
+    required VoidCallback onPressed,
+  }) : super(
+          key: key,
+          btnText: btnText,
+          height: height,
+          width: width,
+          radius: radius,
+          btnTextSize: btnTextSize,
+          isLoading: isLoading,
+          isDisabled: isDisabled,
+          onPressed: onPressed,
+        );
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.center,
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height > 550 ? height : 30,
+        width: width ?? MediaQuery.of(context).size.width - 30,
+        child: OutlinedButton(
+          onPressed: isDisabled ? null : onPressed,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.primaryColor,
+            backgroundColor: Colors.transparent,
+            side: BorderSide(
+              color: isDisabled ? Colors.grey : AppColors.primaryColor,
+              width: 2,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radius),
+            ),
+          ),
+          child: isLoading
+              ? const CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+                  strokeWidth: 2.0,
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment
+                      .center, // Align the icon and text to the center
+                  children: [
+                    if (btnIcon != null) btnIcon!,
+                    if (btnIcon != null)
+                      const SizedBox(width: 10), // space between icon and text
+                    Text(
+                      btnText,
+                      style: TextStyle(
+                        fontSize: btnTextSize,
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class ButtonWithIcon extends StatelessWidget {
   final double radius;

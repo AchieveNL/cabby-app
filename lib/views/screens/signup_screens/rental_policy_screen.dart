@@ -1,18 +1,20 @@
-import 'package:cabby/views/screens/signup_screens/signup_screen.dart';
+import 'package:cabby/config/config.dart';
+import 'package:cabby/models/signup.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:pdf_image_renderer/pdf_image_renderer.dart';
 
 class RentalPolicy extends StatefulWidget {
-  final Function(SignupData) dataCallback;
   final Function({required String title, required bool isDisabled}) btnCallback;
+  final SignupSignature signatureData;
 
   const RentalPolicy({
     Key? key,
-    required this.dataCallback,
     required this.btnCallback,
+    required this.signatureData,
   }) : super(key: key);
 
   @override
@@ -21,6 +23,8 @@ class RentalPolicy extends StatefulWidget {
 
 class _RentalPolicyState extends State<RentalPolicy> {
   String? pdfPath;
+  List<Uint8List>? pdfImages;
+  String rentalAgreementUrl = AppConfig.rentalAgreementUrl;
 
   @override
   void initState() {
@@ -28,9 +32,17 @@ class _RentalPolicyState extends State<RentalPolicy> {
     _downloadPdf();
   }
 
+  @override
+  void didUpdateWidget(RentalPolicy oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.signatureData.signature != widget.signatureData.signature) {
+      _downloadPdf();
+    }
+  }
+
+
   _downloadPdf() async {
-    var url =
-        'https://www.mieterbund.de/fileadmin/public/dmb-wohnungsmietvertrag_engl.pdf';
+    String url = widget.signatureData.signature ?? rentalAgreementUrl;
     var response = await http.get(Uri.parse(url));
 
     var dir = await getApplicationDocumentsDirectory();
@@ -40,17 +52,83 @@ class _RentalPolicyState extends State<RentalPolicy> {
     setState(() {
       pdfPath = file.path;
     });
-    widget.btnCallback(title: "Create a signature", isDisabled: false);
+    final renderedImages = await renderPdfImages(pdfPath!);
+    setState(() {
+      pdfImages = renderedImages;
+    });
+
+    if (widget.signatureData.signature == null) {
+      widget.btnCallback(title: "Create a signature", isDisabled: false);
+    } else {
+      widget.btnCallback(title: "Create account", isDisabled: false);
+    }
+  }
+
+  Future<List<Uint8List>> renderPdfImages(String pdfPath) async {
+    final pdfRenderer = PdfImageRendererPdf(path: pdfPath);
+
+    await pdfRenderer.open();
+    final pageCount = await pdfRenderer.getPageCount();
+
+    List<Uint8List> images = [];
+    for (int i = 0; i < pageCount; i++) {
+      await pdfRenderer.openPage(pageIndex: i);
+      final size = await pdfRenderer.getPageSize(pageIndex: i);
+
+      final img = await pdfRenderer.renderPage(
+        pageIndex: i,
+        x: 0,
+        y: 0,
+        width: size.width,
+        height: size.height,
+        scale: 1,
+        background: Colors.white,
+      );
+      await pdfRenderer.closePage(pageIndex: i);
+      if (img != null) images.add(img);
+    }
+
+    await pdfRenderer.close();
+
+    return images;
   }
 
   @override
   Widget build(BuildContext context) {
-    return pdfPath != null
-        ? PDFView(
-            filePath: pdfPath!,
-          )
-        : const Center(
-            child: CircularProgressIndicator(),
-          );
+    Size screenSize = MediaQuery.of(context).size;
+    return Form(
+      child: Column(
+        children: [
+          _buildHeaderRow("Rental policy & agreement"),
+          const SizedBox(height: 20.0),
+          ...?pdfImages?.map(
+            (image) => Image.memory(
+              image,
+              width: screenSize.width, // Adjusting to screen width
+              fit: BoxFit.fill, // Adjusting fit to fill the space
+              scale: 2,
+            ),
+          ),
+          if (pdfImages == null) const CircularProgressIndicator(),
+        ],
+      ),
+    );
+  }
+
+  Row _buildHeaderRow(String title) {
+    return Row(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
+            color: Color(0xFF0A0A1C),
+          ),
+        ),
+        const Text(" *",
+            style: TextStyle(fontSize: 14, color: Color(0xFFD92037))),
+      ],
+    );
   }
 }

@@ -1,10 +1,156 @@
+import 'package:cabby/config/theme.dart';
+import 'package:cabby/views/screens/create_new_password_screen.dart';
+import 'package:cabby/views/widgets/buttons/buttons.dart';
+import 'package:cabby/views/widgets/decoration.dart';
+import 'package:cabby/views/widgets/loader.dart';
 import 'package:flutter/material.dart';
 
-class OTPVerificationScreen extends StatelessWidget {
-  const OTPVerificationScreen({Key? key}) : super(key: key);
+class OTPVerificationScreen extends StatefulWidget {
+  const OTPVerificationScreen({super.key});
+
+  @override
+  _OTPVerificationScreenState createState() => _OTPVerificationScreenState();
+}
+
+class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
+  final TextEditingController otpController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool visibleButton = true;
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    Size screenSize = MediaQuery.of(context).size;
+
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: GestureDetector(
+        onTap: _dismissKeyboard,
+        child: Container(
+          decoration: DecorationBoxes.decorationBackground(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(screenSize),
+              _buildOTPForm(screenSize),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(Size screenSize) {
+    return Column(
+      children: [
+        SizedBox(height: screenSize.height * 0.1),
+        const Padding(
+          padding: EdgeInsets.only(left: 15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Verify OTP',
+                style: TextStyle(
+                    color: AppColors.whiteColor,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Enter the 4-digit code sent to your email.',
+                style: TextStyle(color: AppColors.whiteColor, fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: screenSize.height * 0.02),
+      ],
+    );
+  }
+
+  Widget _buildOTPForm(Size screenSize) {
+    return Expanded(
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          height: screenSize.height * 0.85,
+          padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
+          decoration: DecorationBoxes.decorationRoundBottomContainer(),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildOTPField(),
+                _buildBottomSection(screenSize),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOTPField() {
+    return TextFormField(
+      controller: otpController,
+      keyboardType: TextInputType.number,
+      validator: (value) {
+        if (value!.length != 4) return 'Enter a 4-digit code';
+        return null;
+      },
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      maxLength: 4,
+      textAlign: TextAlign.center,
+      style: const TextStyle(color: AppColors.blackColor, fontSize: 24),
+      decoration: DecorationInputs.textBoxInputDecoration(label: 'OTP'),
+    );
+  }
+
+  Widget _buildBottomSection(Size screenSize) {
+    return Column(
+      children: [
+        visibleButton
+            ? PrimaryButton(
+                width: screenSize.width * 0.9,
+                height: 50,
+                btnText: 'Verify OTP',
+                onPressed: onVerifyOTP,
+              )
+            : const Loader(),
+        SizedBox(height: screenSize.height * 0.02),
+        GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: const Text(
+            'Back to Login',
+            style: TextStyle(
+              fontFamily: "SF Cartoonist Hand",
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.primaryColor,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _dismissKeyboard() {
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  void onVerifyOTP() {
+    if (_formKey.currentState!.validate()) {
+      // Here, you will handle the OTP verification logic.
+      // If verified successfully, navigate to the CreateNewPasswordScreen
+      // For demonstration, let's assume it's verified:
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CreateNewPasswordScreen(),
+        ),
+      );
+    }
   }
 }
+

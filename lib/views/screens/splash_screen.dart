@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:cabby/config/theme.dart';
+import 'package:cabby/state/app_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -34,6 +36,14 @@ class _SplashScreenState extends State<SplashScreen> {
     if (sp.containsKey('user')) {
       setState(() {
         routeName = "/home";
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final appProvider = Provider.of<AppProvider>(context, listen: false);
+        await appProvider.checkSeenOnboarding();
+        if (appProvider.hasSeenOnboarding) {
+          routeName = "/login";
+        }
       });
     }
   }

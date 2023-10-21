@@ -1,4 +1,5 @@
 import 'package:cabby/config/routes.dart';
+import 'package:cabby/state/app_provider.dart';
 import 'package:cabby/state/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,8 +13,11 @@ class CabbyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => UserProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => AppProvider()),
+      ],
       child: MaterialApp(
         initialRoute: '/',
         routes: routes,

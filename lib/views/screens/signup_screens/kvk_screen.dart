@@ -1,18 +1,23 @@
 import 'dart:io';
 
 import 'package:cabby/config/theme.dart';
-import 'package:cabby/views/screens/signup_screens/signup_screen.dart';
+import 'package:cabby/models/signup.dart';
+import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class KvkScreen extends StatefulWidget {
-  final Function(SignupData)
-      dataCallback; // New callback for updating SignupData
-  final Function btnCallback; // New callback for updating button properties
-
+  final Function(SignupKvk) dataCallback;
+  final Function({required String title, required bool isDisabled}) btnCallback;
+  final SignupKvk kvkData;
   const KvkScreen(
-      {Key? key, required this.dataCallback, required this.btnCallback})
+      {
+    Key? key,
+    required this.dataCallback,
+    required this.btnCallback,
+    required this.kvkData,
+  })
       : super(key: key);
 
   @override
@@ -33,7 +38,7 @@ class _KvkScreenState extends State<KvkScreen> {
         kvkFile = File(result.files.single.path!);
 
         // Create a SignupData object with the picked file
-        SignupData data = SignupData();
+        SignupKvk data = SignupKvk();
         data.kvkFile = kvkFile;
 
         // Pass the updated SignupData to the parent
@@ -52,8 +57,8 @@ class _KvkScreenState extends State<KvkScreen> {
       child: Column(
         children: <Widget>[
           _buildHeaderRow("KVK document"),
+          SizedBox(height: screenSize.height * 0.02),
           _buildFileUploader(screenSize),
-          const SizedBox(height: 20),
         ],
       ),
     );
@@ -80,7 +85,7 @@ class _KvkScreenState extends State<KvkScreen> {
     if (kvkFile != null) {
       return _buildFileRow();
     } else {
-      return _buildUploadButton(screenSize);
+      return _buildUploadButton();
     }
   }
 
@@ -106,22 +111,18 @@ class _KvkScreenState extends State<KvkScreen> {
     );
   }
 
-  OutlinedButton _buildUploadButton(Size screenSize) {
-    return OutlinedButton.icon(
-      onPressed: pickFile,
-      style: ButtonStyle(
-        iconColor:
-            MaterialStateColor.resolveWith((states) => AppColors.primaryColor),
-        iconSize: MaterialStateProperty.all(24),
-      ),
-      icon: SvgPicture.asset('assets/document-text.svg'),
-      label: const Text(
-        'Upload File',
-        style: TextStyle(
-          fontWeight: FontWeight.w700,
-          fontSize: 16,
+  Widget _buildUploadButton() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: SecondaryButtonWithIcon(
+        btnText: 'Upload File',
+        btnIcon: SvgPicture.asset(
+          'assets/document-text.svg',
           color: AppColors.primaryColor,
-        ),
+        ), // Change to the icon you want
+        onPressed: pickFile,
+        isLoading: false,
+        isDisabled: false,
       ),
     );
   }

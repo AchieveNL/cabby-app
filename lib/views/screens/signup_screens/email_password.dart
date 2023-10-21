@@ -1,14 +1,20 @@
 import 'package:cabby/config/theme.dart';
-import 'package:cabby/views/screens/signup_screens/signup_screen.dart';
+import 'package:cabby/models/signup.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/material.dart';
 
 class EmailPassword extends StatefulWidget {
-  final Function(SignupData) dataCallback;
+  final Function(SignupEmailPassword) dataCallback;
+  final SignupEmailPassword emailPasswordData;
   final Function({required String title, required bool isDisabled}) btnCallback;
 
   const EmailPassword(
-      {Key? key, required this.dataCallback, required this.btnCallback})
+      {
+    Key? key,
+    required this.dataCallback,
+    required this.btnCallback,
+    required this.emailPasswordData,
+  })
       : super(key: key);
 
   @override
@@ -16,9 +22,9 @@ class EmailPassword extends StatefulWidget {
 }
 
 class _EmailPasswordState extends State<EmailPassword> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
+  late TextEditingController emailController;
+  late TextEditingController passwordController;
+  late TextEditingController confirmPasswordController;
 
   bool characterLength = false;
   bool containsUpperAndLowerCase = false;
@@ -30,10 +36,26 @@ class _EmailPasswordState extends State<EmailPassword> {
   void initState() {
     super.initState();
 
-    emailController.addListener(updateData);
-    passwordController.addListener(updateData);
-    confirmPasswordController.addListener(updateData);
+    emailController =
+        TextEditingController(text: widget.emailPasswordData.email)
+          ..addListener(updateData);
+    passwordController =
+        TextEditingController(text: widget.emailPasswordData.password)
+          ..addListener(updateData);
+    confirmPasswordController =
+        TextEditingController(text: widget.emailPasswordData.confirmPassword)
+          ..addListener(updateData);
   }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,16 +66,27 @@ class _EmailPasswordState extends State<EmailPassword> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildInputField(
-              screenSize, 'Email Address', emailController, _validateEmail),
+            screenSize,
+            'Email Address',
+            emailController,
+            _validateEmail,
+          ),
+          SizedBox(height: screenSize.height * 0.02),
           _buildInputField(screenSize, 'Password', passwordController,
-              _validatePassword, true),
+            _validatePassword,
+            true,
+          ),
+          SizedBox(height: screenSize.height * 0.02),
           _buildPasswordCriteria(),
+          SizedBox(height: screenSize.height * 0.02),
           _buildInputField(
               screenSize,
               'Confirm password',
               confirmPasswordController,
               (val) => _validateConfirmPassword(val, passwordController.text),
-              true),
+            true,
+          ),
+          SizedBox(height: screenSize.height * 0.04),
           _buildFooterLinks(screenSize),
         ],
       ),
@@ -61,7 +94,7 @@ class _EmailPasswordState extends State<EmailPassword> {
   }
 
   void updateData() {
-    SignupData data = SignupData()
+    SignupEmailPassword data = widget.emailPasswordData
       ..email = emailController.text
       ..password = passwordController.text
       ..confirmPassword = confirmPasswordController.text;
@@ -85,7 +118,7 @@ class _EmailPasswordState extends State<EmailPassword> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _getLabel(label),
-        SizedBox(height: screenSize.height * 0.01),
+        SizedBox(height: screenSize.height * 0.02),
         TextFormField(
           controller: controller,
           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -153,27 +186,29 @@ class _EmailPasswordState extends State<EmailPassword> {
   }
 
   Widget _buildFooterLinks(Size screenSize) {
-    return Padding(
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushReplacementNamed("/login");
+      },
+      child: Padding(
       padding: EdgeInsets.only(
           top: screenSize.height * 0.01, bottom: screenSize.height * 0.02),
-      child: Row(
+        child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text('Have an account?'),
-          const SizedBox(width: 10),
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).pushReplacementNamed("/login");
-            },
-            child: const Text('Login',
+            Text('Have an account?'),
+            SizedBox(width: 10),
+            Text(
+              'Login',
                 style: TextStyle(
                     fontFamily: "SF Cartoonist Hand",
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.primaryColor),),
-          ),
+                  color: AppColors.primaryColor),
+            ),
         ],
+      ),
       ),
     );
   }

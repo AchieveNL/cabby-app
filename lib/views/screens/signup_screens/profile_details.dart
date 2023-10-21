@@ -1,17 +1,21 @@
 import 'package:cabby/config/theme.dart';
 import 'package:cabby/data/data.dart';
-import 'package:cabby/views/screens/signup_screens/signup_screen.dart';
+import 'package:cabby/models/signup.dart';
 import 'package:cabby/views/widgets/decoration.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ProfileDetails extends StatefulWidget {
-  final Function(SignupData) dataCallback;
+  final Function(SignupProfile) dataCallback;
   final Function({required String title, required bool isDisabled}) btnCallback;
+  final SignupProfile profileData;
+
   const ProfileDetails({
     Key? key,
     required this.dataCallback,
     required this.btnCallback,
+    required this.profileData,
   }) : super(key: key);
 
   @override
@@ -19,19 +23,34 @@ class ProfileDetails extends StatefulWidget {
 }
 
 class _ProfileDetailsState extends State<ProfileDetails> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController zipController = TextEditingController();
-  TextEditingController streetController = TextEditingController();
-  TextEditingController locationController = TextEditingController();
-  TextEditingController dobController = TextEditingController();
+  late TextEditingController nameController;
+  late TextEditingController phoneController;
+  late TextEditingController zipController;
+  late TextEditingController streetController;
+  late TextEditingController locationController;
+  late TextEditingController dobController;
 
   String selectedCity = '';
-  late DateTime selectedDate;
+  DateTime? selectedDate;
 
   @override
   void initState() {
     super.initState();
+    // Initialize controllers with data from widget.profileData
+    nameController = TextEditingController(text: widget.profileData.name);
+    phoneController = TextEditingController(text: widget.profileData.phone);
+    zipController = TextEditingController(text: widget.profileData.zip);
+    streetController = TextEditingController(text: widget.profileData.street);
+    locationController =
+        TextEditingController(text: widget.profileData.location);
+    dobController = TextEditingController(
+        text: widget.profileData.dob != null
+            ? DateFormat('dd/MM/yyyy').format(widget.profileData.dob!)
+            : '');
+
+    selectedDate = widget.profileData.dob; // initialize date
+
+    // Now add listeners
     nameController.addListener(validateForm);
     phoneController.addListener(validateForm);
     zipController.addListener(validateForm);
@@ -121,40 +140,43 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     return TextFormField(
       controller: dobController,
       keyboardType: TextInputType.text,
+      readOnly: true,
       onTap: () async {
-        FocusScope.of(context).requestFocus(FocusNode());
-        DateTime? date = await showDatePicker(
+        DateTime? date = await showModalBottomSheet<DateTime>(
           context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime.now().subtract(const Duration(days: 7000)),
-          lastDate: DateTime.now(),
-          builder: (BuildContext context, Widget? child) {
-            return Theme(
-              data: ThemeData.light().copyWith(
-                primaryColor: AppColors.primaryColor,
-                colorScheme: const ColorScheme.light(
-                  primary: AppColors.primaryColor,
-                ),
-                buttonTheme:
-                    const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          builder: (BuildContext builder) {
+            return Container(
+              height: MediaQuery.of(context).copyWith().size.height / 3,
+              color: Colors.white,
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                initialDateTime: DateTime.now(),
+                minimumDate:
+                    DateTime.now().subtract(const Duration(days: 7000)),
+                maximumDate: DateTime.now(),
+                onDateTimeChanged: (DateTime dateTime) {
+                  setState(() {
+                    selectedDate = dateTime;
+                    dobController.text =
+                        DateFormat('dd/MM/yyyy').format(dateTime);
+                  });
+                },
               ),
-              child: child!,
             );
           },
         );
+
         if (date != null) {
           setState(() {
             selectedDate = date;
-            dobController.text = DateFormat('dd/MM/yyyy')
-                .format(DateTime.parse(date.toIso8601String()))
-                .toString();
+            dobController.text =
+                DateFormat('dd/MM/yyyy').format(date).toString();
           });
         }
       },
       style: const TextStyle(color: AppColors.blackColor, fontSize: 14),
       decoration: DecorationInputs.textBoxInputDecorationWithSuffixIcon(
-        label: '',
-        fillColor: AppColors.greenColor,
+        label: 'dd/MM/yyyy',
         suffixIcon: const Icon(Icons.calendar_today_outlined,
             color: AppColors.blackColor, size: 18),
       ),
@@ -192,8 +214,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           selectedCity = cities[index];
                           locationController.text = cities[index];
                           validateForm();
+                          Navigator.of(context).pop();
                         });
-                        Navigator.of(context).pop();
                       },
                       child: Text(
                         cities[index],
@@ -215,16 +237,24 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   }
 
   void validateForm() {
+    if (selectedDate == null) {
+      // Handle the error - maybe show a message asking the user to select a date
+      return;
+    }
+
     bool isFormValid = nameController.text.isNotEmpty &&
-        dobController.text.isNotEmpty &&
         phoneController.text.isNotEmpty &&
-        locationController.text.isNotEmpty &&
         zipController.text.isNotEmpty &&
-        streetController.text.isNotEmpty;
+        streetController.text.isNotEmpty &&
+        locationController.text.isNotEmpty &&
+        dobController.text.isNotEmpty;
 
-    widget.btnCallback(title: "Next", isDisabled: !isFormValid);
+    widget.btnCallback(
+      title: isFormValid ? 'NEXT' : 'ENTER DETAILS',
+      isDisabled: !isFormValid,
+    );
 
-    SignupData data = SignupData()
+    SignupProfile data = SignupProfile()
       ..name = nameController.text
       ..dob = selectedDate
       ..phone = phoneController.text
