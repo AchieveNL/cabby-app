@@ -6,10 +6,12 @@ import 'package:cabby/config/theme.dart';
 import 'package:cabby/models/signup.dart';
 import 'package:cabby/views/screens/signup_screens/camera_access_screen.dart';
 import 'package:cabby/views/screens/signup_screens/camera_screen.dart';
-import 'package:cabby/views/widgets/custom_date_picker.dart';
+import 'package:cabby/views/widgets/decoration.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -31,11 +33,17 @@ class PermitDetails extends StatefulWidget {
 
 class _PermitDetailsState extends State<PermitDetails> {
   late File? taxiPermitFile;
+  late String? taxiPermitExpiry;
+  final TextEditingController expiryDateController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     taxiPermitFile = widget.permitDetailsData.taxiPermitFile;
+    taxiPermitExpiry = widget.permitDetailsData.taxiPermitExpiry;
+    if (taxiPermitExpiry != null) {
+      expiryDateController.text = taxiPermitExpiry!;
+    }
   }
 
   Future<void> pickImage() async {
@@ -90,8 +98,46 @@ class _PermitDetailsState extends State<PermitDetails> {
     );
   }
 
-  void onDataFromCustomDatePicker() {
+  void onDataFromCustomDatePicker(String date) {
+    setState(() {
+      taxiPermitExpiry = date;
+    });
     validateForm();
+  }
+
+  Widget buildDatePickerWidget() {
+    return TextFormField(
+      controller: expiryDateController,
+      keyboardType: TextInputType.text,
+      readOnly: true,
+      onTap: () async {
+        await showModalBottomSheet(
+          context: context,
+          builder: (BuildContext builder) {
+            return Container(
+              height: MediaQuery.of(context).size.height / 3,
+              color: Colors.white,
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                onDateTimeChanged: (DateTime newDateTime) {
+                  final format = DateFormat("dd/MM/yyyy");
+                  final date = format.format(newDateTime);
+                  expiryDateController.text = date;
+                  onDataFromCustomDatePicker(date);
+                },
+              ),
+            );
+          },
+          
+        );
+      },
+      style: const TextStyle(color: AppColors.blackColor, fontSize: 14),
+      decoration: DecorationInputs.textBoxInputDecorationWithSuffixIcon(
+        label: 'Expiry Date (dd/MM/yyyy)',
+        suffixIcon: const Icon(Icons.calendar_today_outlined,
+            color: AppColors.blackColor, size: 18),
+      ),
+    );
   }
 
   void validateForm() {
@@ -99,7 +145,8 @@ class _PermitDetailsState extends State<PermitDetails> {
     widget.btnCallback(title: "Next", isDisabled: !isFormValid);
 
     SignupPermitDetails data = SignupPermitDetails()
-      ..taxiPermitFile = taxiPermitFile;
+      ..taxiPermitFile = taxiPermitFile
+      ..taxiPermitExpiry = taxiPermitExpiry;
     widget.dataCallback(data);
   }
 
@@ -107,9 +154,8 @@ class _PermitDetailsState extends State<PermitDetails> {
   Widget build(BuildContext context) {
     return Form(
       child: Column(
-        children: <Widget>[
-          ..._buildSection("Taxi permission expire date",
-              CustomDatePickerWidget(onData: onDataFromCustomDatePicker)),
+         children: <Widget>[
+          ..._buildSection("Taxi permission expire date", buildDatePickerWidget()),
           ..._buildSection(
               "Taxi permission photo", _buildLicenseContainer(taxiPermitFile)),
         ],

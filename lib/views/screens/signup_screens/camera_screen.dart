@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cabby/config/utils.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -108,11 +109,11 @@ class _CameraScreenState extends State<CameraScreen> {
               final image = await _controller.takePicture();
               final file = File(image.path);
               final croppedFile = await cropImageToFile(file);
-              print(croppedFile);
+              logger(croppedFile);
               widget.onImageCaptured(croppedFile);
               Navigator.pop(context);
             } catch (e) {
-              print(e);
+              logger(e);
             }
           },
         ),

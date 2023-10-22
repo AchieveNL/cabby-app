@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
     duration = const Duration(seconds: 3);
     _decideRoute().then((_) {
       timer = Timer(duration, () {
-        Navigator.of(context).pushReplacementNamed(routeName);
+        Navigator.of(context).pushReplacementNamed("/login");
       });
     });
   }

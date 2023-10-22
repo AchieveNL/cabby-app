@@ -6,24 +6,23 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class KawiScreen extends StatefulWidget {
+class KiwaScreen extends StatefulWidget {
   final Function(SignupKawi) dataCallback;
   final Function({required String title, required bool isDisabled}) btnCallback;
   final SignupKawi kawiData;
 
-  const KawiScreen({
+  const KiwaScreen({
     Key? key,
     required this.dataCallback,
     required this.btnCallback,
     required this.kawiData,
-  })
-      : super(key: key);
+  }) : super(key: key);
 
   @override
-  State<KawiScreen> createState() => _KawiScreenState();
+  State<KiwaScreen> createState() => _KiwaScreenState();
 }
 
-class _KawiScreenState extends State<KawiScreen> {
+class _KiwaScreenState extends State<KiwaScreen> {
   late dynamic kawiFile;
   String? fileSizeError;
 
@@ -62,7 +61,8 @@ class _KawiScreenState extends State<KawiScreen> {
       }
     }
   }
-@override
+
+  @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Form(

@@ -1,10 +1,12 @@
 import 'package:cabby/config/theme.dart';
+import 'package:cabby/config/utils.dart';
+import 'package:cabby/services/user_service.dart';
 import 'package:cabby/utils/methods.dart';
 import 'package:cabby/views/screens/otp_verification_screen.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/decoration.dart';
-import 'package:cabby/views/widgets/loader.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
@@ -16,7 +18,47 @@ class ForgetPasswordScreen extends StatefulWidget {
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool visibleButton = true;
+  bool isLoading = false;
+
+  void onSendResetLink() async {
+    String email = emailController.text;
+    logger('Sending reset link for email: $email'); // Log here
+
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      logger('Form is valid, requesting reset password'); // Log here
+
+      final response = await UserService().requestResetPassword(email);
+      logger(
+          'Reset password response received: ${response.toString()}'); // Log here
+
+      setState(() {
+        isLoading = false;
+      });
+
+      if (response['status'] == 'success') {
+        logger(
+            'Reset password request successful, navigating to OTPVerificationScreen'); // Log here
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OTPVerificationScreen(
+              email: email,
+            ),
+          ),
+        );
+      } else {
+        logger(
+            'Reset password request failed: ${response['message']}'); // Log here
+        showToast(response['message']);
+      }
+    } else {
+      logger('Form validation failed'); // Log here
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,14 +150,13 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   Widget _buildBottomSection(Size screenSize) {
     return Column(
       children: [
-        visibleButton
-            ? PrimaryButton(
-                width: screenSize.width * 0.9,
-                height: 50,
-                btnText: 'Send Code',
-                onPressed: onSendResetLink,
-              )
-            : const Loader(),
+        PrimaryButton(
+          width: screenSize.width * 0.9,
+          height: 50,
+          btnText: 'Send Code',
+          isLoading: isLoading, // Reflect the state of isLoading in the button
+          onPressed: onSendResetLink,
+        ),
         SizedBox(height: screenSize.height * 0.02),
         GestureDetector(
           onTap: () => Navigator.of(context).pop(),
@@ -137,15 +178,15 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
-  void onSendResetLink() {
-    // Here, you will handle the reset password link sending logic.
-    // For now, it's empty.
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const OTPVerificationScreen(),
-      ),
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0,
     );
   }
 }
-

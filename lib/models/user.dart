@@ -1,9 +1,12 @@
+// ignore_for_file: constant_identifier_names
+
+import 'package:cabby/config/utils.dart';
+
 class UserModel {
   final String id;
   final String email;
   final UserStatus status;
   final UserRole role;
-  // Add other necessary fields you need
 
   UserModel({
     required this.id,
@@ -13,12 +16,15 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    logger("JSON: $json");
+    logger("Status: ${json['status']}");
+    logger("Role: ${json['role']}");
+
     return UserModel(
       id: json['id'],
       email: json['email'],
-      status: UserStatus.values[json['status']],
-      role: UserRole.values[json['role']],
-      // Initialize other fields
+      status: _statusFromString(json['status']),
+      role: _roleFromString(json['role']),
     );
   }
 
@@ -30,13 +36,33 @@ class UserModel {
       'role': role.index,
     };
   }
+
+  static UserStatus _statusFromString(String status) {
+    for (UserStatus value in UserStatus.values) {
+      if (value.toString().split('.').last == status) {
+        return value;
+      }
+    }
+    throw Exception('Unknown status value: $status');
+  }
+
+  static UserRole _roleFromString(String role) {
+    for (UserRole value in UserRole.values) {
+      if (value.toString().split('.').last == role) {
+        return value;
+      }
+    }
+    throw Exception('Unknown role value: $role');
+  }
 }
 
 enum UserStatus {
+  APPROVED,
   ACTIVE,
   PENDING,
   BLOCKED,
   REJECTED,
+  REQUIRE_REGISTRATION_FEE,
 }
 
 enum UserRole {

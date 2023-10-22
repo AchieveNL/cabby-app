@@ -1,3 +1,4 @@
+import 'package:cabby/models/profile.dart';
 import 'package:cabby/models/user.dart';
 import 'package:flutter/material.dart';
 
@@ -6,8 +7,10 @@ import 'dart:convert';
 
 class UserProvider with ChangeNotifier {
   UserModel? _user;
+  UserProfileModel? _profile;
 
-  UserModel get user => _user!;
+  UserModel? get user => _user;
+  UserProfileModel? get userProfile => _profile;
 
   void setUser(UserModel user) {
     _user = user;
@@ -40,6 +43,36 @@ class UserProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('user');
   }
+
+  void setUserProfile(UserProfileModel profile) {
+    _profile = profile;
+    saveProfileToPrefs(profile);
+    notifyListeners();
+  }
+
+  Future<void> saveProfileToPrefs(UserProfileModel profile) async {
+    final prefs = await SharedPreferences.getInstance();
+    final profileData = json.encode(profile.toJson());
+    prefs.setString('userProfile', profileData);
+  }
+
+  Future<void> loadProfileFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('userProfile')) {
+      final profileData = prefs.getString('userProfile');
+      _profile = UserProfileModel.fromJson(json.decode(profileData!));
+      notifyListeners();
+    }
+  }
+
+  void clearUserProfile() {
+    _profile = null;
+    removeProfileFromPrefs();
+    notifyListeners();
+  }
+
+  Future<void> removeProfileFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('userProfile');
+  }
 }
-
-

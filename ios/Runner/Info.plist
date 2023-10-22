@@ -49,5 +49,18 @@
     <string>Need camera access to take pictures.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>App requires access to the photo library for selecting signature.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.cabbyrentals.cabby</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>cabby</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

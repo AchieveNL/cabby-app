@@ -1,9 +1,25 @@
+import 'dart:io';
+
 import 'package:cabby/config/theme.dart';
+import 'package:cabby/config/utils.dart';
+import 'package:cabby/models/licence.dart';
+import 'package:cabby/models/permit.dart';
+import 'package:cabby/models/profile.dart';
 import 'package:cabby/models/signup.dart';
+import 'package:cabby/models/user.dart';
+import 'package:cabby/services/auth_service.dart';
+import 'package:cabby/services/licence_service.dart';
+import 'package:cabby/services/payment_service.dart';
+import 'package:cabby/services/permit_service.dart';
+import 'package:cabby/services/profile_service.dart';
+import 'package:cabby/services/upload_service.dart';
+import 'package:cabby/services/user_service.dart';
+import 'package:cabby/views/screens/signup_screens/confirmation_screen.dart';
 import 'package:cabby/views/screens/signup_screens/driver_license.dart';
 import 'package:cabby/views/screens/signup_screens/email_password.dart';
-import 'package:cabby/views/screens/signup_screens/kawi_screen.dart';
+import 'package:cabby/views/screens/signup_screens/kiwa_screen.dart';
 import 'package:cabby/views/screens/signup_screens/kvk_screen.dart';
+import 'package:cabby/views/screens/signup_screens/pay_deposit.dart';
 import 'package:cabby/views/screens/signup_screens/permit_details.dart';
 import 'package:cabby/views/screens/signup_screens/profile_details.dart';
 import 'package:cabby/views/screens/signup_screens/rental_policy_screen.dart';
@@ -11,6 +27,7 @@ import 'package:cabby/views/screens/signup_screens/signature_screen.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -20,6 +37,13 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  UploadService uploadService = UploadService();
+  ProfileService profileService = ProfileService();
+  LicenceService licenceService = LicenceService();
+  PermitService permitService = PermitService();
+  PaymentService paymentService = PaymentService();
+  UserService userService = UserService();
+
   int _currentStep = 0;
 
   SignupEmailPassword emailPasswordData = SignupEmailPassword();
@@ -87,13 +111,16 @@ class _SignupScreenState extends State<SignupScreen> {
           dataCallback: (data) => setState(() => kvkData = data),
           btnCallback: updateButton,
         ),
-        KawiScreen(
+        KiwaScreen(
           kawiData: kawiData,
           dataCallback: (data) => setState(() => kawiData = data),
           btnCallback: updateButton,
         ),
         RentalPolicy(
           signatureData: signatureData, // Assuming RentalPolicy needs it
+          btnCallback: updateButton,
+        ),
+        PayDeposit(
           btnCallback: updateButton,
         ),
       ];
@@ -162,7 +189,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         width: screenSize.width * 0.9,
                         height: 50,
                         isLoading: isButtonLoading,
-                        // isDisabled: isButtonDisabled,
+                        isDisabled: isButtonDisabled,
                         btnText: nextBtnTitle,
                         onPressed: onNext,
                       ),
@@ -251,30 +278,207 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
-  void onNext() {
-    // ignore: unrelated_type_equality_checks
-    if (stepTitles[_currentStep] == "Rent policy") {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SignatureScreen(
-            onSignatureComplete: (signatureUrl) {
-              setState(() {
-                signatureData = SignupSignature()..signature = signatureUrl;
-              });
-            },
-          ),
-        ),
-      );
+  void onNext() async {
+    if (_shouldNavigateToSignatureScreen()) {
+      _navigateToSignatureScreen();
+    } else if (nextBtnTitle == "Create account") {
+      await _handleCreateAccount();
+    } else if (nextBtnTitle == "Pay now") {
+      _initiatePayment();
+    } else if (_shouldIncrementStep()) {
+      _incrementStep();
     }
-    if (_currentStep < stepWidgets.length - 1) {
-      setState(() {
-        _currentStep++;
-        isButtonDisabled = true;
-      });
+  }
 
-      scrollToCurrentStep();
+  bool _shouldNavigateToSignatureScreen() {
+    return stepTitles[_currentStep] == "Rent policy" &&
+        nextBtnTitle != "Create account";
+  }
+
+  void _navigateToSignatureScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SignatureScreen(
+          onSignatureComplete: (signatureUrl) {
+            setState(() {
+              signatureData = SignupSignature()..signature = signatureUrl;
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleCreateAccount() async {
+    setState(() {
+      isButtonLoading = true;
+    });
+
+    try {
+      logger("Creating user...");
+      await _createUser(data: emailPasswordData);
+      logger("User created successfully!");
+
+      logger("Creating profile...");
+      await _createProfile(
+          data: profileData, signature: signatureData.signature!);
+      logger("Profile created successfully!");
+
+      logger("Creating license...");
+      await _createLicence(data: driverLicenceData);
+      logger("License created successfully!");
+
+      logger("Creating permit...");
+      await _createPermit(
+        kiwa: kawiData.kawiFile!,
+        kvk: kvkData.kvkFile!,
+        taxiPermitExpiry: permitDetailsData.taxiPermitExpiry!,
+        taxiPermitFile: permitDetailsData.taxiPermitFile!,
+      );
+      logger("Permit created successfully!");
+
+      final response = await userService.login(
+        emailPasswordData.email!,
+        emailPasswordData.password!,
+      );
+
+      logger(response);
+
+      if (response['status'] == 'success') {
+        UserModel user = response['user'];
+        AuthService authService = AuthService(context);
+
+        await authService.initializeUser(user);
+      }
+      _incrementStep();
+    } catch (e) {
+      logger("Error in handleCreateAccount: $e");
+    } finally {
+      setState(() {
+        isButtonLoading = false;
+      });
     }
-    // Handle final submission or navigation if you've reached the last step...
+  }
+
+  void _initiatePayment() async {
+    setState(() {
+      isButtonLoading = true;
+    });
+
+    final url = await PaymentService().createRegistrationPayment();
+
+    if (url != null) {
+      _openWebviewAndHandlePayment(url);
+    } else {
+      logger("Failed to get payment URL");
+    }
+  }
+
+  void _openWebviewAndHandlePayment(String url) {
+    final webView = FlutterWebviewPlugin();
+
+    // Listen for the redirect URL
+    webView.onUrlChanged.listen((String url) {
+      if (url.startsWith("cabby://registration-payment-completed")) {
+        webView.close();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ConfirmationScreen(),
+          ),
+        );
+      }
+    });
+
+    webView.launch(
+      url,
+      withZoom: false,
+    );
+  }
+
+  bool _shouldIncrementStep() {
+    return _currentStep < stepWidgets.length - 1;
+  }
+
+  void _incrementStep() {
+    setState(() {
+      _currentStep++;
+      isButtonDisabled = true;
+    });
+    scrollToCurrentStep();
+  }
+
+  Future<void> _createUser({required SignupEmailPassword data}) async {
+    await userService.signup(data.email!, data.password!);
+  }
+
+  Future<void> _createProfile(
+      {required SignupProfile data, required String signature}) async {
+    List<String> nameParts = data.name!.split(' ');
+    String firstName = nameParts.first;
+    String lastName =
+        nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+
+    final userProfile = UserProfile(
+      city: data.city as String,
+      fullAddress: data.street as String,
+      fullName: data.name as String,
+      lastName: lastName,
+      firstName: firstName,
+      phoneNumber: data.phone as String,
+      zip: data.zip as String,
+      signature: signature,
+    );
+
+    await ProfileService().createUserProfile(userProfile);
+  }
+
+  Future<void> _createLicence({required SignupDriverLicence data}) async {
+    logger('Initiating license creation...'); // Log here
+
+    final driverLicenseFrontUrl =
+        await uploadService.uploadFile(data.driverLicenseFront as File);
+    final driverLicenseBackUrl =
+        await uploadService.uploadFile(data.driverLicenseBack as File);
+
+    logger(
+        'Front License URL: $driverLicenseFrontUrl, Back License URL: $driverLicenseBackUrl'); // Log here
+
+    if (driverLicenseFrontUrl != null && driverLicenseBackUrl != null) {
+      final driverLicenseRequest = DriverLicenseRequest(
+        driverLicenseBack: driverLicenseBackUrl,
+        driverLicenseFront: driverLicenseFrontUrl,
+        driverLicenseExpiry: data.expiryDate as String,
+      );
+
+      await licenceService.createDriverLicense(driverLicenseRequest);
+    }
+  }
+
+  Future<void> _createPermit({
+    required File taxiPermitFile,
+    required File kiwa,
+    required File kvk,
+    required String taxiPermitExpiry,
+  }) async {
+    logger('Initiating permit creation...'); // Log here
+
+    String? kiwaDocumentUrl = await uploadService.uploadFile(kiwa);
+    String? kvkDocumentUrl = await uploadService.uploadFile(kvk);
+    String? taxiPermitPictureUrl =
+        await uploadService.uploadFile(taxiPermitFile);
+
+    logger(
+        'Kiwa URL: $kiwaDocumentUrl, Kvk URL: $kvkDocumentUrl, Taxi Permit URL: $taxiPermitPictureUrl'); // Log here
+
+    final permitRequest = PermitRequest(
+      kiwaDocument: kiwaDocumentUrl,
+      kvkDocument: kvkDocumentUrl,
+      taxiPermitExpiry: taxiPermitExpiry,
+      taxiPermitPicture: taxiPermitPictureUrl,
+    );
+
+    await permitService.createPermit(permitRequest);
   }
 }

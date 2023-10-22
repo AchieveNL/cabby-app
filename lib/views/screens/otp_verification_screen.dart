@@ -1,12 +1,14 @@
 import 'package:cabby/config/theme.dart';
+import 'package:cabby/services/user_service.dart';
 import 'package:cabby/views/screens/create_new_password_screen.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/decoration.dart';
-import 'package:cabby/views/widgets/loader.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
-  const OTPVerificationScreen({super.key});
+  final String email;
+  const OTPVerificationScreen({super.key, required this.email});
 
   @override
   _OTPVerificationScreenState createState() => _OTPVerificationScreenState();
@@ -15,7 +17,36 @@ class OTPVerificationScreen extends StatefulWidget {
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   final TextEditingController otpController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool visibleButton = true;
+  bool isLoading = false;
+
+  void onVerifyOTP() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+
+      final response = await UserService().verifyOtp(
+        widget.email,
+        otpController.text,
+      );
+
+      setState(() {
+        isLoading = false;
+      });
+
+      if (response['status'] == 'success') {
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreateNewPasswordScreen(email: widget.email),
+          ),
+        );
+      } else {
+        showToast(response['message']);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,14 +141,13 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   Widget _buildBottomSection(Size screenSize) {
     return Column(
       children: [
-        visibleButton
-            ? PrimaryButton(
-                width: screenSize.width * 0.9,
-                height: 50,
-                btnText: 'Verify OTP',
-                onPressed: onVerifyOTP,
-              )
-            : const Loader(),
+        PrimaryButton(
+          width: screenSize.width * 0.9,
+          height: 50,
+          btnText: 'Verify OTP',
+          isLoading: isLoading,
+          onPressed: onVerifyOTP,
+        ),
         SizedBox(height: screenSize.height * 0.02),
         GestureDetector(
           onTap: () => Navigator.of(context).pop(),
@@ -139,18 +169,15 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
-  void onVerifyOTP() {
-    if (_formKey.currentState!.validate()) {
-      // Here, you will handle the OTP verification logic.
-      // If verified successfully, navigate to the CreateNewPasswordScreen
-      // For demonstration, let's assume it's verified:
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const CreateNewPasswordScreen(),
-        ),
-      );
-    }
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 }
-

@@ -1,10 +1,12 @@
 import 'package:cabby/config/theme.dart';
+import 'package:cabby/services/user_service.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/material.dart';
 
 class CreateNewPasswordScreen extends StatefulWidget {
-  const CreateNewPasswordScreen({super.key});
+  final String email;
+  const CreateNewPasswordScreen({super.key, required this.email});
 
   @override
   _CreateNewPasswordScreenState createState() =>
@@ -19,6 +21,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
   bool containsNumber = false;
   bool showPassword = false;
   bool showConfirmPassword = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -33,12 +36,34 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
         confirmPasswordController.text, passwordController.text);
   }
 
-  void onSubmit() {
+  void onSubmit() async {
     if (_validatePassword(passwordController.text) == null &&
         _validateConfirmPassword(
                 confirmPasswordController.text, passwordController.text) ==
             null) {
-      _showSuccessDialog();
+      try {
+        setState(() {
+          isLoading = true;
+        });
+        var response = await UserService().resetPassword(
+            widget.email, passwordController.text); // Use the API
+        if (response['status'] == 'success') {
+          _showSuccessDialog();
+          setState(() {
+            isLoading = false;
+          });
+        } else {
+          // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(response['message'] ?? 'An error occurred.'),
+          ));
+        }
+      } catch (error) {
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred. Please try again.')),
+        );
+      }
     }
   }
 
@@ -174,6 +199,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                 PrimaryButton(
                   width: screenSize.width * 0.9,
                   height: 50,
+                  isLoading: isLoading,
                   btnText: 'Set Password',
                   onPressed: onSubmit,
                 ),

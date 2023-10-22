@@ -1,14 +1,14 @@
-
-
 import 'package:cabby/config/config.dart';
+import 'package:cabby/config/utils.dart';
 import 'package:cabby/models/user.dart';
+import 'package:cabby/services/api_service.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 class UserService {
   final Dio _dio;
-  final CookieJar _cookieJar = CookieJar();
+  final CookieJar _cookieJar = ApiService.sharedCookieJar;
 
   UserService()
       : _dio = Dio(BaseOptions(
@@ -20,18 +20,29 @@ class UserService {
 
   Future<Map<String, dynamic>> _processResponse(Response response) async {
     if (response.statusCode == 200) {
-      return response.data;
+      logger(response.data);
+      return {
+        'status': 'success',
+        'payload': response.data['payload'],
+      };
     } else {
-      throw Exception('Failed with status: ${response.statusCode}');
+      return {
+        'status': 'error',
+        'message': response.data['message'],
+      };
     }
   }
 
-  Future<Map<String, dynamic>> signup(String email, String password) async {
+  Future<Map<String, dynamic>?> signup(String email, String password) async {
     final response = await _dio.post(
       '/signup',
       data: {'email': email, 'password': password},
     );
-    return _processResponse(response);
+    if (response.statusCode == 201) {
+      return response.data["payload"];
+    } else {
+      return null;
+    }
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
@@ -40,6 +51,7 @@ class UserService {
       data: {'email': email, 'password': password},
     );
     if (response.statusCode == 200) {
+      logger(response.data);
       return {
         'status': 'success',
         'user': UserModel.fromJson(response.data['payload']),
@@ -50,6 +62,14 @@ class UserService {
         'message': response.data['message'],
       };
     }
+  }
+
+  Future<Map<String, dynamic>> requestResetPassword(String email) async {
+    final response = await _dio.post(
+      '/request-password-reset',
+      data: {'email': email},
+    );
+    return _processResponse(response);
   }
 
   Future<Map<String, dynamic>> verifyOtp(String email, String otp) async {
@@ -71,16 +91,6 @@ class UserService {
 
   Future<Map<String, dynamic>> deleteUser() async {
     final response = await _dio.delete('/delete-account');
-    return _processResponse(response);
-  }
-
-  Future<Map<String, dynamic>> fetchCurrentUser() async {
-    final response = await _dio.get('/current');
-    return _processResponse(response);
-  }
-
-  Future<Map<String, dynamic>> fetchUserById(String id) async {
-    final response = await _dio.get('/$id');
     return _processResponse(response);
   }
 }

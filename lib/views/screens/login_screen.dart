@@ -1,10 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cabby/config/theme.dart';
+import 'package:cabby/config/utils.dart';
+import 'package:cabby/models/user.dart';
+import 'package:cabby/services/auth_service.dart';
 import 'package:cabby/services/user_service.dart';
 import 'package:cabby/utils/methods.dart';
 import 'package:cabby/views/screens/forget_password_screen.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/decoration.dart';
-import 'package:cabby/views/widgets/loader.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -19,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final UserService userService = UserService();
-  bool visibleButton = true;
+  bool isLoading = false;
   bool showPassword = false;
 
   @override
@@ -138,14 +142,13 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildBottomSection(Size screenSize) {
     return Column(
       children: [
-        visibleButton
-            ? PrimaryButton(
-                width: screenSize.width * 0.9,
-                height: 50,
-                btnText: 'Login',
-                onPressed: onSubmit,
-              )
-            : const Loader(),
+        PrimaryButton(
+          width: screenSize.width * 0.9,
+          height: 50,
+          btnText: 'Login',
+          isLoading: isLoading,
+          onPressed: onSubmit,
+        ),
         SizedBox(height: screenSize.height * 0.03),
         GestureDetector(
           onTap: () => Navigator.of(context).pushNamed("/register"),
@@ -217,5 +220,39 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void onSubmit() {}
+  void onSubmit() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+
+      try {
+        final response = await userService.login(
+          emailController.text,
+          passwordController.text,
+        );
+
+        logger(response);
+
+        if (response['status'] == 'success') {
+          UserModel user = response['user'];
+          AuthService authService = AuthService(context);
+
+          await authService.initializeUser(user);
+
+          Navigator.of(context).pushReplacementNamed("/status");
+        } else if (response['status'] == 'error') {
+          setState(() {
+            isLoading = true;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response['message'])),
+          );
+        }
+      } catch (e) {
+        logger("Error during login: $e");
+      }
+    }
+  }
 }

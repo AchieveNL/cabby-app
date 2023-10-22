@@ -1,3 +1,4 @@
+import 'package:cabby/config/utils.dart';
 import 'package:cabby/services/profile_service.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
   }
 
   void _onChangeTab(String newTab) {
-    print(newTab);
+    logger(newTab);
     if (newTab == 'Select') {
       _selectSignatureFromGallery();
     } else {
@@ -68,7 +69,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
     // Request permissions before accessing the gallery
     var permissionStatus = await Permission.photos.request();
 
-    print(permissionStatus);
+    logger(permissionStatus);
 
     if (permissionStatus.isGranted) {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -116,7 +117,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
     try {
       final response =
           await profileService.createRentalAgreement(signatureFile);
-      print("Successfully uploaded the signature: $response");
+      logger("Successfully uploaded the signature: $response");
 
       if (response.containsKey('payload') &&
           response['payload'].containsKey('url')) {
@@ -124,7 +125,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
       }
       Navigator.of(context).pop();
     } catch (e) {
-      print("Error uploading the signature: $e");
+      logger("Error uploading the signature: $e");
     }
 
     // widget.btnCallback(title: "Submit", isDisabled: false);

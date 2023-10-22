@@ -24,6 +24,7 @@ class SignupDriverLicence {
 
 class SignupPermitDetails {
   File? taxiPermitFile;
+  String? taxiPermitExpiry;
 }
 
 class SignupKvk {
