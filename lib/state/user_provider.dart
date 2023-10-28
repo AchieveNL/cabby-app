@@ -28,7 +28,7 @@ class UserProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey('user')) {
       final userData = prefs.getString('user');
-      _user = UserModel.fromJson(json.decode(userData!));
+      _user = UserModel.fromJsonWithInt(json.decode(userData!));
       notifyListeners();
     }
   }

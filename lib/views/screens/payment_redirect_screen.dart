@@ -57,7 +57,7 @@ class _PaymentRedirectScreenState extends State<PaymentRedirectScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/success.png',
+                  'assets/images/success.png',
                   width: 180,
                   height: 180,
                 ),

@@ -277,7 +277,7 @@ launchUrlV2(url, BuildContext context) async {
 
 setImage(image) {
   return image == "" || image == null || image == "null"
-      ? const AssetImage('assets/avatar.png')
+      ? const AssetImage('assets/images/avatar.png')
       : MemoryImage(base64Decode(image));
 }
 

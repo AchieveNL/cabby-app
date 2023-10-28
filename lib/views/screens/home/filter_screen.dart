@@ -1,0 +1,80 @@
+import 'package:cabby/config/theme.dart';
+import 'package:cabby/views/screens/home/home_filter_card.dart';
+import 'package:cabby/views/widgets/buttons/buttons.dart';
+import 'package:flutter/material.dart';
+
+class FilterScreen extends StatefulWidget {
+  const FilterScreen({super.key});
+
+  @override
+  State<FilterScreen> createState() => _FilterScreenState();
+}
+
+class _FilterScreenState extends State<FilterScreen> {
+  @override
+  Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+    return Scaffold(
+      appBar: _buildAppBar(context),
+      body: Container(
+        padding: const EdgeInsets.only(top: 50),
+        decoration: const BoxDecoration(
+          color: AppColors.primaryLightColor,
+        ),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: AppColors.whiteColor,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.0),
+              topRight: Radius.circular(30.0),
+            ),
+          ),
+          padding: const EdgeInsets.only(top: 20),
+          child: Column(
+            children: [
+              const Expanded(
+                flex: 2,
+                child: HomeFilterCard(isInScreen: true),
+              ),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    PrimaryButton(
+                      btnText: 'Find a car',
+                      radius: 10,
+                      width: screenSize.width * 0.95,
+                      onPressed: () {
+                        // Add your action here
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: AppColors.primaryLightColor, // Changed to white
+      elevation: 0,
+      leading: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: const Icon(
+            Icons
+                .arrow_back_ios_new_rounded, // Simplified the back arrow for clarity
+            color: AppColors.whiteColor,
+          ),
+        ),
+      ),
+    );
+  }
+}

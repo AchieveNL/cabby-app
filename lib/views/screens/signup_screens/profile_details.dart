@@ -151,8 +151,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: DateTime.now(),
-                minimumDate:
-                    DateTime.now().subtract(const Duration(days: 7000)),
+                minimumDate: DateTime(1940),
                 maximumDate: DateTime.now(),
                 onDateTimeChanged: (DateTime dateTime) {
                   setState(() {

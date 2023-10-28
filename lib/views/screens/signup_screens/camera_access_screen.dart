@@ -49,7 +49,7 @@ class CameraAccessScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SvgPicture.asset(
-              'assets/camera.svg',
+              'assets/svg/camera.svg',
               width: 120,
               height: 120,
               color: Colors.blueGrey[300],

@@ -1,3 +1,4 @@
+import 'package:cabby/config/utils.dart';
 import 'package:cabby/models/user.dart';
 import 'package:cabby/state/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -8,37 +9,38 @@ class StatusRouterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context).user;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // ignore: unnecessary_null_comparison
-      if (user == null) {
-        Navigator.of(context).pushReplacementNamed("/login");
-      } else {
-        switch (user.status) {
-          case UserStatus.REQUIRE_REGISTRATION_FEE:
-            Navigator.of(context).pushReplacementNamed("/pay-deposit");
-            break;
-          case UserStatus.PENDING:
-            Navigator.of(context).pushReplacementNamed("/verification");
-            break;
-          case UserStatus.BLOCKED:
-            Navigator.of(context).pushReplacementNamed("/blocked");
-            break;
-          case UserStatus.REJECTED:
-            Navigator.of(context).pushReplacementNamed("/rejected");
-            break;
-          case UserStatus.ACTIVE:
-          case UserStatus.APPROVED:
-            Navigator.of(context).pushReplacementNamed("/home");
-            break;
-          default:
-            _showErrorDialog(context);
-            break;
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        final user = userProvider.user;
+        logger("Saved User: $user");
+        if (user == null) {
+          return _navigateToScreen(context, "/login");
+        } else {
+          switch (user.status) {
+            case UserStatus.REQUIRE_REGISTRATION_FEE:
+              return _navigateToScreen(context, "/pay-deposit");
+            case UserStatus.PENDING:
+              return _navigateToScreen(context, "/verification");
+            case UserStatus.BLOCKED:
+              return _navigateToScreen(context, "/blocked");
+            case UserStatus.REJECTED:
+              return _navigateToScreen(context, "/rejected");
+            case UserStatus.ACTIVE:
+            case UserStatus.APPROVED:
+              return _navigateToScreen(context, "/home");
+            default:
+              _showErrorDialog(context);
+              return const SizedBox.shrink();
+          }
         }
-      }
-    });
+      },
+    );
+  }
 
+  Widget _navigateToScreen(BuildContext context, String route) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.of(context).pushReplacementNamed(route);
+    });
     return const SizedBox.shrink();
   }
 

@@ -17,19 +17,19 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   List<Map<String, String>> onboardingPages = [
     {
-      'image': "assets/Book Lovers.svg",
+      'image': "assets/svg/Book Lovers.svg",
       'title': "Premium Rental Cabs",
       'description':
           "As a cab driver, you depend on having a reliable vehicle to do your job. Cabby can help you get back on the road quickly and easily, with our all-electric rental cabs available for short-term use."
     },
     {
-      'image': "assets/Busy businessman crossing road.svg",
+      'image': "assets/svg/Busy businessman crossing road.svg",
       'title': "Your One-Stop Car Rental Solution",
       'description':
           "Finding a temporary vehicle for work can be a hassle. Rent one of our premium cars and start earning money right away."
     },
     {
-      'image': "assets/Building Website.svg",
+      'image': "assets/svg/Building Website.svg",
       'title': "The Key to Your Next Trip",
       'description':
           "Don't let a temporary loss of your own vehicle keep you from taking on new fares. Cabby provides cab drivers with a hassle-free way to rent an all-premium cars and start making money. Book now and get back on the road to success."

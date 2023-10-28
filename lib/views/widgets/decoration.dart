@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 class DecorationBoxes {
   static BoxDecoration decorationBackground() {
     return const BoxDecoration(
-      color: AppColors.primaryColor,
+      gradient: LinearGradient(
+        colors: [AppColors.primaryLightColor, AppColors.primaryColor],
+        stops: [-0.2469, 0.7485],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
     );
   }
 
@@ -183,7 +188,9 @@ class DecorationBoxes {
 
 class DecorationInputs {
   static InputDecoration textBoxInputDecoration(
-      {String? label, Color fillColor = AppColors.greyColor}) {
+      {String? label,
+      Color fillColor = AppColors.greyColor,
+      Widget? suffixIcon}) {
     return InputDecoration(
       isDense: true,
       filled: true,
@@ -203,31 +210,49 @@ class DecorationInputs {
         borderSide: BorderSide(color: AppColors.primaryColor, width: 1.0),
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
       ),
+      suffixIcon: suffixIcon,
     );
   }
 
   static InputDecoration textBoxInputDecorationWithPrefixWidget(
       {String? label,
       required Widget prefix,
-      Color fillColor = AppColors.whiteColor}) {
+      Color fillColor = AppColors.greyColor}) {
     return InputDecoration(
-        isDense: true,
-        hintText: label ?? '',
-        filled: true,
-        fillColor: fillColor,
-        hintStyle: const TextStyle(color: AppColors.blackColor, fontSize: 16),
-        contentPadding: const EdgeInsets.all(15),
-        errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide.none),
-        enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide.none),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide.none,
+      isDense: true,
+      filled: true,
+      fillColor: fillColor,
+      hintText: label,
+      hintStyle: const TextStyle(
+          fontFamily: 'Montserrat', color: AppColors.blackColor, fontSize: 14),
+      contentPadding: const EdgeInsets.all(15),
+      errorStyle: TextStyle(
+        color: AppColors.redColor.withOpacity(0.6),
+      ),
+      errorBorder: const OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.red,
+          width: 1.0,
         ),
-        prefixIcon: prefix);
+        borderRadius: BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(5),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: const OutlineInputBorder(
+        borderSide: BorderSide(
+          color: AppColors.primaryColor,
+          width: 1.0,
+        ),
+        borderRadius: BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+      ),
+      prefixIcon: prefix,
+    );
   }
 
   static InputDecoration textBoxInputDecorationWithPrefixIcon(

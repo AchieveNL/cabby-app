@@ -128,7 +128,6 @@ class _PermitDetailsState extends State<PermitDetails> {
               ),
             );
           },
-          
         );
       },
       style: const TextStyle(color: AppColors.blackColor, fontSize: 14),
@@ -154,8 +153,9 @@ class _PermitDetailsState extends State<PermitDetails> {
   Widget build(BuildContext context) {
     return Form(
       child: Column(
-         children: <Widget>[
-          ..._buildSection("Taxi permission expire date", buildDatePickerWidget()),
+        children: <Widget>[
+          ..._buildSection(
+              "Taxi permission expire date", buildDatePickerWidget()),
           ..._buildSection(
               "Taxi permission photo", _buildLicenseContainer(taxiPermitFile)),
         ],
@@ -216,7 +216,7 @@ class _PermitDetailsState extends State<PermitDetails> {
     return Column(
       children: [
         const Spacer(),
-        SvgPicture.asset("assets/Img_box_fill.svg",
+        SvgPicture.asset("assets/svg/Img_box_fill.svg",
             width: 48, height: 48, fit: BoxFit.contain),
         const Spacer(),
         SizedBox(

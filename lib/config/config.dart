@@ -9,8 +9,7 @@ class AppConfig {
   static const String currentEnvironment = 'staging';
 
   static String get rentalAgreementUrl =>
-      "${_baseUrls[currentEnvironment]}/assets/rental-agreement.pdf";
-      
+      "${_baseUrls[currentEnvironment]}/assets/cabby_huurovereenkomst.pdf";
 
   static String get baseUrl =>
       _baseUrls[currentEnvironment] ?? _baseUrls['staging']!;

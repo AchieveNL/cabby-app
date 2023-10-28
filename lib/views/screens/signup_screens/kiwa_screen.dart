@@ -109,7 +109,7 @@ class _KiwaScreenState extends State<KiwaScreen> {
   Row _buildFileRow() {
     return Row(
       children: <Widget>[
-        SvgPicture.asset('assets/pdfIcon.svg'),
+        SvgPicture.asset('assets/svg/pdfIcon.svg'),
         const SizedBox(width: 20),
         const Text('Kiwa taxi vergunning Document'),
         const Spacer(),
@@ -119,7 +119,7 @@ class _KiwaScreenState extends State<KiwaScreen> {
               kawiFile = null;
             });
           },
-          icon: SvgPicture.asset('assets/close-circle.svg'),
+          icon: SvgPicture.asset('assets/svg/close-circle.svg'),
         ),
       ],
     );
@@ -131,7 +131,7 @@ class _KiwaScreenState extends State<KiwaScreen> {
       child: SecondaryButtonWithIcon(
         btnText: 'Upload File',
         btnIcon: SvgPicture.asset(
-          'assets/document-text.svg',
+          'assets/svg/document-text.svg',
           color: AppColors.primaryColor,
         ), // Change to the icon you want
         onPressed: pickFile,

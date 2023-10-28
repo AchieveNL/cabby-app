@@ -6,6 +6,7 @@ import 'package:cabby/models/signup.dart';
 import 'package:cabby/views/screens/signup_screens/camera_access_screen.dart';
 import 'package:cabby/views/screens/signup_screens/camera_screen.dart';
 import 'package:cabby/views/widgets/decoration.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,7 +26,6 @@ class DriverLicenceScreen extends StatefulWidget {
     required this.btnCallback,
     required this.driverLicenceData,
   }) : super(key: key);
-
 
   @override
   State<DriverLicenceScreen> createState() => _DriverLicenceScreenState();
@@ -49,13 +49,7 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
   }
 
   Future<void> pickImage(String licenseSide) async {
-    bool inDebugMode = false;
-    assert(() {
-      inDebugMode = true;
-      return true;
-    }());
-
-    if (inDebugMode) {
+    if (kDebugMode) {
       String url = licenseSide == 'front'
           ? 'https://storage.googleapis.com/cabby-bucket/images/front.png'
           : 'https://storage.googleapis.com/cabby-bucket/images/back.png';
@@ -120,7 +114,6 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
       ),
     );
   }
-
 
   void updateParentWidget() {
     final isDisabled = driverLicenseFront == null ||
@@ -207,7 +200,7 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
     return Column(
       children: [
         const Spacer(),
-        SvgPicture.asset("assets/Img_box_fill.svg",
+        SvgPicture.asset("assets/svg/Img_box_fill.svg",
             width: 48, height: 48, fit: BoxFit.contain),
         const Spacer(),
         SizedBox(
@@ -223,7 +216,7 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
               ),
               child: Row(
                 children: [
-                  SvgPicture.asset('assets/camera.svg'),
+                  SvgPicture.asset('assets/svg/camera.svg'),
                   const SizedBox(width: 10),
                   const Text('Take an image',
                       style: TextStyle(
@@ -256,7 +249,8 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: DateTime.now(),
-                minimumDate: DateTime.now().subtract(const Duration(days: 3650)),
+                minimumDate:
+                    DateTime.now().subtract(const Duration(days: 3650)),
                 maximumDate: DateTime.now().add(const Duration(days: 3650)),
                 onDateTimeChanged: (DateTime dateTime) {
                   expiryDate = DateFormat('dd/MM/yyyy').format(dateTime);

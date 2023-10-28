@@ -1,9 +1,8 @@
 import 'package:cabby/config/utils.dart';
 import 'package:cabby/services/payment_service.dart';
-import 'package:cabby/views/screens/signup_screens/confirmation_screen.dart';
+import 'package:cabby/views/screens/webview_screen.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class PayDepositScreen extends StatefulWidget {
   const PayDepositScreen({
@@ -25,31 +24,20 @@ class _PayDepositScreenState extends State<PayDepositScreen> {
     final url = await PaymentService().createRegistrationPayment();
 
     if (url != null) {
-      _openWebviewAndHandlePayment(url);
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WebviewScreen(
+            url: url,
+            navigationDelegate: depositPaymentRedirect(context),
+            title: "Pay deposit",
+          ),
+        ),
+      );
     } else {
       logger("Failed to get payment URL");
     }
-  }
-
-  void _openWebviewAndHandlePayment(String url) {
-    final webView = FlutterWebviewPlugin();
-
-    // Listen for the redirect URL
-    webView.onUrlChanged.listen((String url) {
-      if (url.startsWith("cabby://registration-payment-completed")) {
-        webView.close();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ConfirmationScreen(),
-          ),
-        );
-      }
-    });
-    webView.launch(
-      url,
-      withZoom: false,
-    );
   }
 
   @override

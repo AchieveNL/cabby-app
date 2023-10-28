@@ -274,9 +274,12 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
       children: [
         Icon(Icons.check, color: criteria ? Colors.lightGreen : Colors.grey),
         const SizedBox(width: 5),
-        Text(text,
-            style:
-                TextStyle(color: criteria ? Colors.lightGreen : Colors.grey)),
+        Flexible(
+          child: Text(
+            text,
+            style: TextStyle(color: criteria ? Colors.lightGreen : Colors.grey),
+          ),
+        ),
       ],
     );
   }

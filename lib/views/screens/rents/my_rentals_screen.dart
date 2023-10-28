@@ -1,0 +1,87 @@
+import 'package:cabby/config/theme.dart';
+import 'package:cabby/views/screens/rents/rents_tab.dart';
+import 'package:cabby/views/widgets/app_bar.dart';
+import 'package:flutter/material.dart';
+
+class MyRentalsScreen extends StatefulWidget {
+  const MyRentalsScreen({Key? key}) : super(key: key);
+
+  @override
+  _MyRentalsScreenState createState() => _MyRentalsScreenState();
+}
+
+class _MyRentalsScreenState extends State<MyRentalsScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 5,
+      child: Scaffold(
+        appBar: buildAppBarForPage(
+          context: context,
+          title: 'My Rentals',
+        ),
+        body: Container(
+          decoration: const BoxDecoration(
+            color: AppColors.primaryLightColor,
+          ),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: AppColors.whiteColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30.0),
+                topRight: Radius.circular(30.0),
+              ),
+            ),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                TabBar(
+                  isScrollable: true,
+                  indicator: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25),
+                    color: AppColors.primaryColor,
+                  ),
+                  labelColor: Colors.white,
+                  unselectedLabelColor: AppColors.primaryColor,
+                  tabs: [
+                    _customTab("All"),
+                    _customTab("Active"),
+                    _customTab("Pending"),
+                    _customTab("Canceled"),
+                    _customTab("Rejected"),
+                  ],
+                ),
+                const Expanded(
+                  child: TabBarView(
+                    children: [
+                      RentsContent(status: "All"),
+                      RentsContent(status: "Confirmed"),
+                      RentsContent(status: "Pending"),
+                      RentsContent(status: "Canceled"),
+                      RentsContent(status: "Rejected"),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _customTab(String title) {
+    return Tab(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0),
+        child: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 14,
+          ),
+        ),
+      ),
+    );
+  }
+}

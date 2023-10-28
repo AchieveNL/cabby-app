@@ -1,21 +1,23 @@
 import 'package:cabby/config/theme.dart';
+import 'package:cabby/config/utils.dart';
 import 'package:cabby/models/signup.dart';
+import 'package:cabby/services/user_service.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/material.dart';
+
+enum EmailValidationState { Idle, Loading, Exists, DoesntExist }
 
 class EmailPassword extends StatefulWidget {
   final Function(SignupEmailPassword) dataCallback;
   final SignupEmailPassword emailPasswordData;
   final Function({required String title, required bool isDisabled}) btnCallback;
 
-  const EmailPassword(
-      {
+  const EmailPassword({
     Key? key,
     required this.dataCallback,
     required this.btnCallback,
     required this.emailPasswordData,
-  })
-      : super(key: key);
+  }) : super(key: key);
 
   @override
   State<EmailPassword> createState() => _EmailPasswordState();
@@ -31,6 +33,13 @@ class _EmailPasswordState extends State<EmailPassword> {
   bool containsNumber = false;
   bool showPassword = false;
   bool showConfirmPassword = false;
+  bool emailExists = false;
+
+  FocusNode emailFocusNode = FocusNode();
+  ValueNotifier<EmailValidationState> emailValidationNotifier =
+      ValueNotifier(EmailValidationState.Idle);
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -45,6 +54,39 @@ class _EmailPasswordState extends State<EmailPassword> {
     confirmPasswordController =
         TextEditingController(text: widget.emailPasswordData.confirmPassword)
           ..addListener(updateData);
+
+    emailFocusNode.addListener(() {
+      if (!emailFocusNode.hasFocus) {
+        _checkIfEmailExists(emailController.text);
+      }
+    });
+  }
+
+  Future<void> _checkIfEmailExists(String email) async {
+    logger("checking if email exists");
+    setState(() {
+      emailExists = true;
+    });
+    emailValidationNotifier.value = EmailValidationState.Loading;
+    try {
+      Map<String, dynamic> checkEmail = await UserService().emailExits(email);
+      setState(() {
+        emailExists = true;
+      });
+      if (checkEmail['status'] == "success") {
+        if (checkEmail['payload']) {
+          emailValidationNotifier.value = EmailValidationState.Exists;
+        } else {
+          setState(() {
+            emailExists = false;
+          });
+          emailValidationNotifier.value = EmailValidationState.DoesntExist;
+        }
+      }
+      updateData();
+    } catch (e) {
+      logger(e.toString());
+    }
   }
 
   @override
@@ -52,16 +94,17 @@ class _EmailPasswordState extends State<EmailPassword> {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+    emailFocusNode.dispose();
+    emailValidationNotifier.dispose();
     super.dispose();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
 
     return Form(
+      key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -72,7 +115,10 @@ class _EmailPasswordState extends State<EmailPassword> {
             _validateEmail,
           ),
           SizedBox(height: screenSize.height * 0.02),
-          _buildInputField(screenSize, 'Password', passwordController,
+          _buildInputField(
+            screenSize,
+            'Password',
+            passwordController,
             _validatePassword,
             true,
           ),
@@ -80,10 +126,10 @@ class _EmailPasswordState extends State<EmailPassword> {
           _buildPasswordCriteria(),
           SizedBox(height: screenSize.height * 0.02),
           _buildInputField(
-              screenSize,
-              'Confirm password',
-              confirmPasswordController,
-              (val) => _validateConfirmPassword(val, passwordController.text),
+            screenSize,
+            'Confirm password',
+            confirmPasswordController,
+            (val) => _validateConfirmPassword(val, passwordController.text),
             true,
           ),
           SizedBox(height: screenSize.height * 0.04),
@@ -103,12 +149,14 @@ class _EmailPasswordState extends State<EmailPassword> {
         _validatePassword(passwordController.text) == null &&
         _validateConfirmPassword(
                 confirmPasswordController.text, passwordController.text) ==
-            null) {
+            null &&
+        !emailExists) {
       widget.btnCallback(title: "Next", isDisabled: false);
     } else {
       widget.btnCallback(title: "Next", isDisabled: true);
     }
     widget.dataCallback(data);
+    _updatePasswordCriteria(passwordController.text);
   }
 
   Widget _buildInputField(Size screenSize, String label,
@@ -119,20 +167,65 @@ class _EmailPasswordState extends State<EmailPassword> {
       children: [
         _getLabel(label),
         SizedBox(height: screenSize.height * 0.02),
-        TextFormField(
-          controller: controller,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          keyboardType: isPassword
-              ? TextInputType.visiblePassword
-              : TextInputType.emailAddress,
-          validator: validator as String? Function(String?),
-          obscureText: isPassword &&
-              (label == 'Password' ? !showPassword : !showConfirmPassword),
-          style: const TextStyle(color: AppColors.blackColor, fontSize: 16),
-          decoration: isPassword
-              ? _buildPasswordDecoration(label)
-              : _buildDefaultDecoration(label),
-        ),
+        label == 'Email Address'
+            ? ValueListenableBuilder<EmailValidationState>(
+                valueListenable: emailValidationNotifier,
+                builder: (context, state, child) {
+                  Widget? suffixIcon;
+                  if (state == EmailValidationState.Loading) {
+                    suffixIcon = SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: Transform.scale(
+                        scale: 0.5,
+                        child: const CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    );
+                  } else if (state == EmailValidationState.DoesntExist) {
+                    suffixIcon = const Icon(Icons.check,
+                        color: Colors.green); // green check mark
+                  } else if (state == EmailValidationState.Exists) {
+                    suffixIcon = const Icon(Icons.error,
+                        color: Colors.red); // error icon
+                  }
+                  return TextFormField(
+                    focusNode: emailFocusNode,
+                    controller: controller,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: isPassword
+                        ? TextInputType.visiblePassword
+                        : TextInputType.emailAddress,
+                    validator: validator as String? Function(String?),
+                    obscureText: isPassword &&
+                        (label == 'Password'
+                            ? !showPassword
+                            : !showConfirmPassword),
+                    style: const TextStyle(
+                        color: AppColors.blackColor, fontSize: 16),
+                    decoration: isPassword
+                        ? _buildPasswordDecoration(label)
+                        : DecorationInputs.textBoxInputDecoration(
+                            label: label, suffixIcon: suffixIcon),
+                  );
+                },
+              )
+            : TextFormField(
+                controller: controller,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                keyboardType: isPassword
+                    ? TextInputType.visiblePassword
+                    : TextInputType.emailAddress,
+                validator: validator as String? Function(String?),
+                obscureText: isPassword &&
+                    (label == 'Password'
+                        ? !showPassword
+                        : !showConfirmPassword),
+                style:
+                    const TextStyle(color: AppColors.blackColor, fontSize: 16),
+                decoration: isPassword
+                    ? _buildPasswordDecoration(label)
+                    : _buildDefaultDecoration(label),
+              ),
       ],
     );
   }
@@ -159,7 +252,22 @@ class _EmailPasswordState extends State<EmailPassword> {
   }
 
   InputDecoration _buildDefaultDecoration(String label) {
-    return DecorationInputs.textBoxInputDecoration(label: label);
+    return DecorationInputs.textBoxInputDecoration(
+      label: label,
+      suffixIcon: ValueListenableBuilder<EmailValidationState>(
+          valueListenable: emailValidationNotifier,
+          builder: (context, state, child) {
+            if (state == EmailValidationState.Loading) {
+              return const CircularProgressIndicator(); // loading spinner
+            } else if (state == EmailValidationState.DoesntExist) {
+              return const Icon(Icons.check,
+                  color: Colors.green); // green check mark
+            } else if (state == EmailValidationState.Exists) {
+              return const Icon(Icons.error, color: Colors.red); // error icon
+            }
+            return Container(); // just an empty container for default state
+          }),
+    );
   }
 
   Widget _buildPasswordCriteria() {
@@ -191,24 +299,24 @@ class _EmailPasswordState extends State<EmailPassword> {
         Navigator.of(context).pushReplacementNamed("/login");
       },
       child: Padding(
-      padding: EdgeInsets.only(
-          top: screenSize.height * 0.01, bottom: screenSize.height * 0.02),
+        padding: EdgeInsets.only(
+            top: screenSize.height * 0.01, bottom: screenSize.height * 0.02),
         child: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
             Text('Have an account?'),
             SizedBox(width: 10),
             Text(
               'Login',
-                style: TextStyle(
-                    fontFamily: "SF Cartoonist Hand",
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+              style: TextStyle(
+                  fontFamily: "SF Cartoonist Hand",
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.primaryColor),
             ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
@@ -252,5 +360,14 @@ class _EmailPasswordState extends State<EmailPassword> {
       return 'Please enter a valid email address';
     }
     return null;
+  }
+
+  void _updatePasswordCriteria(String password) {
+    setState(() {
+      characterLength = password.length >= 8;
+      containsUpperAndLowerCase = password.contains(RegExp(r'[A-Z]')) &&
+          password.contains(RegExp(r'[a-z]'));
+      containsNumber = password.contains(RegExp(r'[0-9]'));
+    });
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
-
-import 'package:cabby/config/theme.dart';
-import 'package:cabby/state/app_provider.dart';
+import 'package:cabby/state/user_provider.dart';
+import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,30 +21,18 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
     duration = const Duration(seconds: 3);
-    _decideRoute().then((_) {
+    loadUser().then((_) {
       timer = Timer(duration, () {
-        Navigator.of(context).pushReplacementNamed("/login");
+        Navigator.of(context).pushReplacementNamed("/status");
       });
     });
   }
 
-  Future<void> _decideRoute() async {
-    final sp = await prefs;
-    if (sp.containsKey('user')) {
-      setState(() {
-        routeName = "/home";
-      });
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        final appProvider = Provider.of<AppProvider>(context, listen: false);
-        await appProvider.checkSeenOnboarding();
-        if (appProvider.hasSeenOnboarding) {
-          routeName = "/login";
-        }
-      });
-    }
+  Future<void> loadUser() async {
+    await Provider.of<UserProvider>(context, listen: false).loadUserFromPrefs();
+    await Provider.of<UserProvider>(context, listen: false)
+        .loadProfileFromPrefs();
   }
 
   @override
@@ -58,9 +45,14 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: AppColors.primaryColor,
-      body: Center(
-        child: Image.asset('assets/logo.png', width: screenSize.width * 0.7),
+      body: Container(
+        decoration: DecorationBoxes.decorationBackground(),
+        child: Center(
+          child: Image.asset(
+            'assets/images/logo.png',
+            width: screenSize.width * 0.7,
+          ),
+        ),
       ),
     );
   }

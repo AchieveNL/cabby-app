@@ -28,6 +28,15 @@ class UserModel {
     );
   }
 
+  factory UserModel.fromJsonWithInt(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['id'],
+      email: json['email'],
+      status: UserStatus.values[json['status']],
+      role: UserRole.values[json['role']],
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

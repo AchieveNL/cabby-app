@@ -38,7 +38,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/success.png',
+                  'assets/images/success.png',
                   width: 180,
                   height: 180,
                 ),

@@ -243,7 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.of(context).pushReplacementNamed("/status");
         } else if (response['status'] == 'error') {
           setState(() {
-            isLoading = true;
+            isLoading = false;
           });
 
           ScaffoldMessenger.of(context).showSnackBar(

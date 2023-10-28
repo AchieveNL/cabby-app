@@ -46,21 +46,35 @@ class UserService {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await _dio.post(
-      '/mobile-login',
-      data: {'email': email, 'password': password},
-    );
-    if (response.statusCode == 200) {
-      logger(response.data);
-      return {
-        'status': 'success',
-        'user': UserModel.fromJson(response.data['payload']),
-      };
-    } else {
-      return {
-        'status': 'error',
-        'message': response.data['message'],
-      };
+    try {
+      final response = await _dio.post(
+        '/mobile-login',
+        data: {'email': email, 'password': password},
+      );
+      if (response.statusCode == 200) {
+        logger(response.data);
+        return {
+          'status': 'success',
+          'user': UserModel.fromJson(response.data['payload']),
+        };
+      } else {
+        return {
+          'status': 'error',
+          'message': response.data['message'],
+        };
+      }
+    } catch (error) {
+      if (error is DioException) {
+        return {
+          'status': 'error',
+          'message': error.response?.data['message'] ?? 'An error occurred.',
+        };
+      } else {
+        return {
+          'status': 'error',
+          'message': 'An unexpected error occurred.',
+        };
+      }
     }
   }
 
@@ -92,5 +106,23 @@ class UserService {
   Future<Map<String, dynamic>> deleteUser() async {
     final response = await _dio.delete('/delete-account');
     return _processResponse(response);
+  }
+
+  Future<Map<String, dynamic>> emailExits(String email) async {
+    final response = await _dio.get(
+      '/email-exists',
+      queryParameters: {'email': email},
+    );
+    if (response.statusCode == 200) {
+      return {
+        'status': 'success',
+        'payload': response.data['payload']['emailExists'],
+      };
+    } else {
+      return {
+        'status': 'error',
+        'message': response.data['message'],
+      };
+    }
   }
 }

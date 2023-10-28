@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cabby/config/theme.dart';
 import 'package:cabby/config/utils.dart';
 import 'package:cabby/models/licence.dart';
@@ -14,7 +13,6 @@ import 'package:cabby/services/permit_service.dart';
 import 'package:cabby/services/profile_service.dart';
 import 'package:cabby/services/upload_service.dart';
 import 'package:cabby/services/user_service.dart';
-import 'package:cabby/views/screens/signup_screens/confirmation_screen.dart';
 import 'package:cabby/views/screens/signup_screens/driver_license.dart';
 import 'package:cabby/views/screens/signup_screens/email_password.dart';
 import 'package:cabby/views/screens/signup_screens/kiwa_screen.dart';
@@ -24,10 +22,10 @@ import 'package:cabby/views/screens/signup_screens/permit_details.dart';
 import 'package:cabby/views/screens/signup_screens/profile_details.dart';
 import 'package:cabby/views/screens/signup_screens/rental_policy_screen.dart';
 import 'package:cabby/views/screens/signup_screens/signature_screen.dart';
+import 'package:cabby/views/screens/webview_screen.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -347,6 +345,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
       if (response['status'] == 'success') {
         UserModel user = response['user'];
+        // ignore: use_build_context_synchronously
         AuthService authService = AuthService(context);
 
         await authService.initializeUser(user);
@@ -369,32 +368,20 @@ class _SignupScreenState extends State<SignupScreen> {
     final url = await PaymentService().createRegistrationPayment();
 
     if (url != null) {
-      _openWebviewAndHandlePayment(url);
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WebviewScreen(
+            url: url,
+            navigationDelegate: depositPaymentRedirect(context),
+            title: "Pay deposit",
+          ),
+        ),
+      );
     } else {
       logger("Failed to get payment URL");
     }
-  }
-
-  void _openWebviewAndHandlePayment(String url) {
-    final webView = FlutterWebviewPlugin();
-
-    // Listen for the redirect URL
-    webView.onUrlChanged.listen((String url) {
-      if (url.startsWith("cabby://registration-payment-completed")) {
-        webView.close();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ConfirmationScreen(),
-          ),
-        );
-      }
-    });
-
-    webView.launch(
-      url,
-      withZoom: false,
-    );
   }
 
   bool _shouldIncrementStep() {
