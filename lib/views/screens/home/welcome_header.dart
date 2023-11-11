@@ -1,4 +1,5 @@
 import 'package:cabby/config/theme.dart';
+import 'package:cabby/views/screens/notification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -41,14 +42,19 @@ class WelcomeHeader extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              // Handle your onTap logic here
+              // ignore: use_build_context_synchronously
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NotificationScreen(),
+                ),
+              );
             },
             child: SvgPicture.asset(
               'assets/svg/bell.svg',
               color: Colors.white,
-              width: 40,
               height: 40,
-              fit: BoxFit.scaleDown,
+              width: 40,
             ),
           ),
         ],

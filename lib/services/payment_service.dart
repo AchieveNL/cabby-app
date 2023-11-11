@@ -27,4 +27,17 @@ class PaymentService {
     }
     return null;
   }
+
+  Future<String?> createOrderPaymentUrl(String orderId) async {
+    try {
+      final response = await _dio.post('/order/$orderId/checkout-url');
+      logger(response);
+      if (response.statusCode == 200 && response.data != null) {
+        return response.data['payload']['checkoutUrl']['checkoutUrl'];
+      }
+    } catch (e) {
+      logger('Error creating order payment: $e');
+    }
+    return null;
+  }
 }

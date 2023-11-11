@@ -46,6 +46,7 @@ class _MyRentalsScreenState extends State<MyRentalsScreen> {
                   tabs: [
                     _customTab("All"),
                     _customTab("Active"),
+                    _customTab("Completed"),
                     _customTab("Pending"),
                     _customTab("Canceled"),
                     _customTab("Rejected"),
@@ -56,6 +57,7 @@ class _MyRentalsScreenState extends State<MyRentalsScreen> {
                     children: [
                       RentsContent(status: "All"),
                       RentsContent(status: "Confirmed"),
+                      RentsContent(status: "Completed"),
                       RentsContent(status: "Pending"),
                       RentsContent(status: "Canceled"),
                       RentsContent(status: "Rejected"),

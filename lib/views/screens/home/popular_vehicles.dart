@@ -1,6 +1,7 @@
 import 'package:cabby/config/theme.dart';
 import 'package:cabby/models/vehicle.dart';
 import 'package:cabby/services/vehicle_service.dart';
+import 'package:cabby/views/screens/vehicles_screens/vehicles_screen.dart';
 import 'package:cabby/views/widgets/skeletons/VehicleCardSkeleton.dart';
 import 'package:cabby/views/widgets/vehicle_card.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +44,14 @@ class _PopularVehiclesState extends State<PopularVehicles> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const VehiclesScreen(),
+                      ),
+                    );
+                  },
                   child: const Text(
                     'View all cars',
                     style: TextStyle(

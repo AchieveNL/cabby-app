@@ -6,6 +6,7 @@ import 'package:cabby/views/screens/home/minimized_home_filter_card.dart';
 import 'package:cabby/views/screens/home/popular_vehicles.dart';
 import 'package:cabby/views/screens/home/sliver_header_delegate.dart';
 import 'package:cabby/views/screens/home/welcome_header.dart';
+import 'package:cabby/views/screens/notification_screen.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -145,12 +146,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text('${user.fullName}!'),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NotificationScreen(),
+                        ),
+                      );
+                    },
                     child: SvgPicture.asset(
                       'assets/svg/bell.svg',
-                      width: 40,
+                      color: Colors.white,
                       height: 40,
-                      fit: BoxFit.scaleDown,
+                      width: 40,
                     ),
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'package:cabby/config/theme.dart';
 import 'package:cabby/data/data.dart';
+import 'package:cabby/views/screens/vehicles_screens/vehicles_screen.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/cupertino.dart';
@@ -86,7 +87,12 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
                 radius: 10,
                 width: screenSize.width * 0.95,
                 onPressed: () {
-                  // Add your action here
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const VehiclesScreen(),
+                    ),
+                  );
                 },
               ),
           ],

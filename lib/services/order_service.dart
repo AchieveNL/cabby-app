@@ -61,15 +61,7 @@ class OrdersService {
     required DateTime rentalEndDate,
   }) async {
     String toIso8601WithoutMilliseconds(DateTime dateTime) {
-      String isoStr = dateTime.toIso8601String();
-      List<String> parts = isoStr.split(':');
-
-      if (parts.length > 2) {
-        String secondPart = parts[2].substring(0, 2);
-        return "${parts[0]}:${parts[1]}:$secondPart" 'Z';
-      }
-
-      return isoStr;
+      return "${dateTime.toUtc().toIso8601String().split('.')[0]}Z";
     }
 
     logger(jsonEncode({
@@ -122,6 +114,48 @@ class OrdersService {
         return orders;
       } else {
         throw Exception('Failed to fetch user orders by status');
+      }
+    } catch (error) {
+      logger(error);
+      rethrow;
+    }
+  }
+
+  Future<OrderDetails> fetchOrderDetails(String orderId) async {
+    try {
+      Response response = await _dio.get('/$orderId/details');
+      if (response.statusCode == 200) {
+        return OrderDetails.fromJson(response.data['payload']);
+      } else {
+        throw Exception('Failed to fetch order details');
+      }
+    } catch (error) {
+      logger(error);
+      rethrow;
+    }
+  }
+
+  Future<bool> cancelOrder(String orderId) async {
+    try {
+      Response response = await _dio.post('/cancel', data: {
+        'orderId': orderId,
+      });
+      logger(response);
+      return true;
+    } catch (error) {
+      logger(error);
+      rethrow;
+    }
+  }
+
+  Future<bool> completeOrder(String orderId) async {
+    try {
+      Response response = await _dio.post('/orders/$orderId/complete');
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to complete order');
       }
     } catch (error) {
       logger(error);

@@ -11,6 +11,8 @@ class PrimaryButton extends StatelessWidget {
   final bool isLoading;
   final bool isDisabled;
   final VoidCallback onPressed;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
 
   const PrimaryButton({
     Key? key,
@@ -22,6 +24,8 @@ class PrimaryButton extends StatelessWidget {
     this.isDisabled = false,
     this.btnTextSize = 16,
     required this.onPressed,
+    this.prefixIcon,
+    this.suffixIcon,
   }) : super(key: key);
 
   @override
@@ -45,12 +49,24 @@ class PrimaryButton extends StatelessWidget {
                   color: Colors.white,
                   size: 20.0,
                 )
-              : Text(
-                  btnText,
-                  style: TextStyle(
-                    fontSize: btnTextSize,
-                    color: Colors.white,
-                  ),
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (prefixIcon != null) prefixIcon!,
+                    if (prefixIcon != null)
+                      const SizedBox(
+                        width: 10,
+                      ),
+                    Text(
+                      btnText,
+                      style: TextStyle(
+                        fontSize: btnTextSize,
+                        color: Colors.white,
+                      ),
+                    ),
+                    if (suffixIcon != null) const SizedBox(width: 5),
+                    if (suffixIcon != null) suffixIcon!,
+                  ],
                 ),
         ),
       ),
@@ -64,9 +80,11 @@ class SecondaryButton extends StatelessWidget {
   final double height;
   final double? width;
   final double btnTextSize;
-  final bool isLoading; // loading state
-  final bool isDisabled; // disabled state
+  final bool isLoading;
+  final bool isDisabled;
   final VoidCallback onPressed;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
 
   const SecondaryButton({
     Key? key,
@@ -78,6 +96,8 @@ class SecondaryButton extends StatelessWidget {
     this.isDisabled = false,
     this.btnTextSize = 16,
     required this.onPressed,
+    this.prefixIcon,
+    this.suffixIcon,
   }) : super(key: key);
 
   @override
@@ -91,9 +111,9 @@ class SecondaryButton extends StatelessWidget {
           onPressed: isDisabled ? null : onPressed,
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.primaryColor,
-            backgroundColor: Colors.transparent, // Text color
+            backgroundColor: Colors.transparent,
             side: BorderSide(
-              color: isDisabled ? Colors.grey : AppColors.primaryColor, // Border color
+              color: isDisabled ? Colors.grey : AppColors.primaryColor,
               width: 2,
             ),
             shape: RoundedRectangleBorder(
@@ -101,15 +121,101 @@ class SecondaryButton extends StatelessWidget {
             ),
           ),
           child: isLoading
-              ? const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
-                  strokeWidth: 2.0,
+              ? const SpinKitThreeBounce(
+                  color: Colors.white,
+                  size: 20.0,
                 )
-              : Text(
-                  btnText,
-                  style: TextStyle(
-                    fontSize: btnTextSize,
-                  ),
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (prefixIcon != null) prefixIcon!,
+                    if (prefixIcon != null) const SizedBox(width: 5),
+                    Text(
+                      btnText,
+                      style: TextStyle(
+                        fontSize: btnTextSize,
+                        color:
+                            isDisabled ? Colors.grey : AppColors.primaryColor,
+                      ),
+                    ),
+                    if (suffixIcon != null) const SizedBox(width: 5),
+                    if (suffixIcon != null) suffixIcon!,
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+class DangerButton extends StatelessWidget {
+  final String btnText;
+  final double radius;
+  final double height;
+  final double? width;
+  final double btnTextSize;
+  final bool isLoading;
+  final bool isDisabled;
+  final VoidCallback onPressed;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
+
+  const DangerButton({
+    Key? key,
+    required this.btnText,
+    this.height = 50,
+    this.width = 250,
+    this.radius = 25,
+    this.isLoading = false,
+    this.isDisabled = false,
+    this.btnTextSize = 16,
+    required this.onPressed,
+    this.prefixIcon,
+    this.suffixIcon,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.center,
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height > 550 ? height : 30,
+        width: width ?? MediaQuery.of(context).size.width - 30,
+        child: OutlinedButton(
+          onPressed: isDisabled ? null : onPressed,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.red, // Danger color
+            backgroundColor: Colors.transparent,
+            side: BorderSide(
+              color: isDisabled ? Colors.grey : Colors.red, // Danger color
+              width: 2,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radius),
+            ),
+          ),
+          child: isLoading
+              ? const SpinKitThreeBounce(
+                  color: Colors.red, // Danger color
+                  size: 20.0,
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (prefixIcon != null) prefixIcon!,
+                    if (prefixIcon != null) const SizedBox(width: 5),
+                    Text(
+                      btnText,
+                      style: TextStyle(
+                        fontSize: btnTextSize,
+                        color: isDisabled
+                            ? Colors.grey
+                            : Colors.red, // Danger color
+                      ),
+                    ),
+                    if (suffixIcon != null) const SizedBox(width: 5),
+                    if (suffixIcon != null) suffixIcon!,
+                  ],
                 ),
         ),
       ),
@@ -189,7 +295,6 @@ class SecondaryButtonWithIcon extends SecondaryButton {
     );
   }
 }
-
 
 class ButtonWithIcon extends StatelessWidget {
   final double radius;

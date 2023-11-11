@@ -26,6 +26,7 @@ import 'package:cabby/views/screens/webview_screen.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -416,6 +417,8 @@ class _SignupScreenState extends State<SignupScreen> {
       phoneNumber: data.phone as String,
       zip: data.zip as String,
       signature: signature,
+      dateOfBirth: DateFormat('dd/MM/yyyy')
+          .format(DateTime.parse(data.dob!.toIso8601String())),
     );
 
     await ProfileService().createUserProfile(userProfile);

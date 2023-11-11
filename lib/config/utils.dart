@@ -10,6 +10,13 @@ void logger(dynamic message) {
   }
 }
 
+class Utils {
+  static String formatDateTime(String isoDateString) {
+    DateTime dateTime = DateTime.parse(isoDateString);
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} on ${dateTime.day}/${dateTime.month}/${dateTime.year}';
+  }
+}
+
 NavigationDelegate depositPaymentRedirect(BuildContext context) {
   return NavigationDelegate(
     onNavigationRequest: (NavigationRequest request) {

@@ -6,7 +6,6 @@ Widget buildStatusBadge({required String status}) {
   String text;
 
   switch (status) {
-    // I've assumed the attribute is named 'orderStatus'. You can replace it with the correct attribute name if it's different.
     case "CONFIRMED":
       badgeColor = const Color.fromARGB(255, 220, 255, 214);
       textColor = const Color.fromARGB(255, 91, 188, 75);
@@ -17,7 +16,7 @@ Widget buildStatusBadge({required String status}) {
       textColor = const Color.fromARGB(255, 228, 171, 16);
       text = 'Pending';
       break;
-    case "CANCELLED":
+    case "CANCELED":
       badgeColor = const Color.fromARGB(255, 255, 212, 212);
       textColor = const Color.fromARGB(255, 217, 32, 55);
       text = 'Canceled';
@@ -26,6 +25,16 @@ Widget buildStatusBadge({required String status}) {
       badgeColor = const Color.fromARGB(255, 248, 215, 218);
       textColor = const Color.fromARGB(255, 231, 76, 60);
       text = 'Rejected';
+      break;
+    case "COMPLETED":
+      badgeColor = const Color.fromARGB(255, 212, 230, 241);
+      textColor = const Color.fromARGB(255, 52, 152, 219);
+      text = 'Completed';
+      break;
+    case "UNPAID":
+      badgeColor = const Color.fromARGB(255, 220, 220, 220);
+      textColor = const Color.fromARGB(255, 150, 150, 150);
+      text = 'Require payment';
       break;
     default:
       badgeColor = const Color.fromARGB(255, 220, 220, 220);

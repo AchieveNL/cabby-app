@@ -31,7 +31,7 @@ class VerificationScreen extends StatelessWidget {
               ),
               child: Center(
                   child: Image.asset(
-                      'assets/data_verification.png')), // Replace 'asset image path' with your actual asset image path.
+                      'assets/images/data_verification.png')), // Replace 'asset image path' with your actual asset image path.
             ),
             const SizedBox(height: 20),
 

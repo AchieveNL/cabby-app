@@ -8,6 +8,7 @@ class UserProfile {
   final String zip;
   final String? profilePhoto;
   final String? signature;
+  final String? dateOfBirth;
 
   UserProfile({
     required this.city,
@@ -19,6 +20,7 @@ class UserProfile {
     required this.zip,
     this.profilePhoto,
     this.signature,
+    this.dateOfBirth,
   });
 
   Map<String, dynamic> toJson() {
@@ -30,6 +32,7 @@ class UserProfile {
       'firstName': firstName,
       'phoneNumber': phoneNumber,
       'zip': zip,
+      'dateOfBirth': dateOfBirth,
       if (profilePhoto != null) 'profilePhoto': profilePhoto,
       if (signature != null) 'signature': signature,
     };

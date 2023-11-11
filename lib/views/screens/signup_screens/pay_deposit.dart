@@ -30,7 +30,7 @@ class _PayDepositState extends State<PayDeposit> {
           _buildHeaderRow("Pay deposit"),
           SizedBox(height: screenSize.height * 0.05),
           Image.asset(
-            'assets/pay_deposit.png',
+            'assets/images/pay_deposit.png',
             width: 128,
             height: 128,
           ),

@@ -242,7 +242,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     }
 
     bool isFormValid = nameController.text.isNotEmpty &&
-        phoneController.text.isNotEmpty &&
         zipController.text.isNotEmpty &&
         streetController.text.isNotEmpty &&
         locationController.text.isNotEmpty &&

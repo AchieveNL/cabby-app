@@ -51,6 +51,10 @@ dependencies:
   webview_flutter: ^4.4.1
   shimmer: ^3.0.0
   flutter_cache_manager: ^3.3.1
+  supabase: ^1.11.11
+  supabase_flutter: ^1.10.24
+  uuid: ^4.1.0
+  logger: ^2.0.2+1
 
 dev_dependencies:
   flutter_test:
