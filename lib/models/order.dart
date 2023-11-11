@@ -115,6 +115,7 @@ class OrderDetails {
   final String statusMessage;
   final String orderMessage;
   final bool readyToUse;
+  final bool isVehicleUnlocked;
 
   OrderDetails({
     required this.order,
@@ -124,6 +125,7 @@ class OrderDetails {
     required this.statusMessage,
     required this.orderMessage,
     required this.readyToUse,
+    required this.isVehicleUnlocked,
   });
 
   factory OrderDetails.fromJson(Map<String, dynamic> json) {
@@ -135,6 +137,7 @@ class OrderDetails {
       statusMessage: json['statusMessage'],
       orderMessage: json['orderMessage'],
       readyToUse: json['readyToUse'],
+      isVehicleUnlocked: json['isVehicleUnlocked'],
     );
   }
 }
@@ -144,6 +147,7 @@ class OrderDetail extends OrderOverview {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? note;
+  final bool isVehicleUnlocked;
 
   OrderDetail({
     required String id,
@@ -156,6 +160,7 @@ class OrderDetail extends OrderOverview {
     required this.paymentId,
     required this.createdAt,
     required this.updatedAt,
+    required this.isVehicleUnlocked,
     this.note,
   }) : super(
           id: id,
@@ -182,6 +187,7 @@ class OrderDetail extends OrderOverview {
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       note: json['note'],
+      isVehicleUnlocked: json['isVehicleUnlocked'],
     );
   }
 }
