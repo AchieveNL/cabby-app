@@ -8,7 +8,6 @@ import 'package:cabby/views/screens/signup_screens/camera_access_screen.dart';
 import 'package:cabby/views/screens/signup_screens/camera_screen.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -47,13 +46,6 @@ class _PermitDetailsState extends State<PermitDetails> {
   }
 
   Future<void> pickImage() async {
-    if (kDebugMode) {
-      await _loadImageFromUrl(
-          "https://storage.googleapis.com/cabby-bucket/images/front.png");
-      validateForm();
-      return;
-    }
-
     final status = await Permission.camera.status;
     if (status.isGranted) {
       _navigateToCameraScreen();

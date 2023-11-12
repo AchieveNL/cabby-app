@@ -83,3 +83,17 @@ class Vehicle {
     };
   }
 }
+
+class AvailableVehicleModels {
+  final String companyName;
+  final String model;
+
+  AvailableVehicleModels({required this.companyName, required this.model});
+
+  factory AvailableVehicleModels.fromJson(Map<String, dynamic> json) {
+    return AvailableVehicleModels(
+      companyName: json['companyName'],
+      model: json['model'],
+    );
+  }
+}

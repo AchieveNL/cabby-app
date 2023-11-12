@@ -1,5 +1,7 @@
 import 'package:cabby/config/theme.dart';
+import 'package:cabby/config/utils.dart';
 import 'package:cabby/models/profile.dart';
+import 'package:cabby/services/auth_service.dart';
 import 'package:cabby/state/user_provider.dart';
 import 'package:cabby/views/screens/home/home_filter_card.dart';
 import 'package:cabby/views/screens/home/minimized_home_filter_card.dart';
@@ -28,13 +30,16 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+    // Schedule a check after the current build phase
+    Future.microtask(() => _fetchInitialData());
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    _showTitleNotifier.dispose();
-    super.dispose();
+  void _fetchInitialData() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    if (userProvider.userProfile == null && userProvider.user != null) {
+      logger('Initializing user: ${userProvider.user!.toJson()}');
+      await AuthService(context).initializeUser(userProvider.user!);
+    }
   }
 
   void _scrollListener() {
@@ -53,25 +58,27 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
-          final user = userProvider.userProfile;
-          return user == null
-              ? const Center(child: Text('User profile not available!'))
-              : Container(
-                  decoration: DecorationBoxes.decorationBackground(),
-                  child: Stack(
-                    children: [
-                      CustomScrollView(
-                        controller: _scrollController,
-                        slivers: <Widget>[
-                          _buildSliverAppBar(screenSize, user),
-                          _buildSliverPersistentHeader(screenSize),
-                          _buildContentSection(),
-                        ],
-                      ),
-                      _backToTopButton(),
+          if (userProvider.userProfile == null) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            final user = userProvider.userProfile!;
+            return Container(
+              decoration: DecorationBoxes.decorationBackground(),
+              child: Stack(
+                children: [
+                  CustomScrollView(
+                    controller: _scrollController,
+                    slivers: <Widget>[
+                      _buildSliverAppBar(screenSize, user),
+                      _buildSliverPersistentHeader(screenSize),
+                      _buildContentSection(),
                     ],
                   ),
-                );
+                  _backToTopButton(),
+                ],
+              ),
+            );
+          }
         },
       ),
     );
@@ -133,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return ValueListenableBuilder<bool>(
       valueListenable: _showTitleNotifier,
       builder: (context, showTitle, child) => SliverAppBar(
-        expandedHeight: screenSize.height * 0.25,
+        expandedHeight: 100,
         floating: false,
         pinned: true,
         backgroundColor:
@@ -176,21 +183,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSliverPersistentHeader(Size screenSize) {
-    return SliverPersistentHeader(
-      pinned: true,
-      delegate: SliverHeaderDelegate(
-        minHeight: 80,
-        maxHeight: 80,
-        child: ValueListenableBuilder<bool>(
-          valueListenable: _showTitleNotifier,
-          builder: (context, showTitle, child) => showTitle
-              ? Container(
+    return ValueListenableBuilder<bool>(
+      valueListenable: _showTitleNotifier,
+      builder: (context, showTitle, child) => showTitle
+          ? SliverPersistentHeader(
+              pinned: true,
+              delegate: SliverHeaderDelegate(
+                minHeight: 80,
+                maxHeight: 80,
+                child: Container(
                   decoration:
                       const BoxDecoration(color: AppColors.primaryLightColor),
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: screenSize.width * 0.03,
-                    ),
+                        horizontal: screenSize.width * 0.03),
                     decoration: const BoxDecoration(
                       color: AppColors.whiteColor,
                       borderRadius: BorderRadius.only(
@@ -200,10 +206,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: const MinimaziedHomeFilterCard(),
                   ),
-                )
-              : const SizedBox.shrink(),
-        ),
-      ),
+                ),
+              ),
+            )
+          : const SliverToBoxAdapter(
+              child: SizedBox(),
+            ),
     );
   }
 
@@ -211,32 +219,86 @@ class _HomeScreenState extends State<HomeScreen> {
     return SliverToBoxAdapter(
       child: ValueListenableBuilder<bool>(
         valueListenable: _showTitleNotifier,
-        builder: (context, showTitle, child) => Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: !showTitle
-                ? const BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0),
-                  )
-                : BorderRadius.zero,
-          ),
-          child: Stack(
-            children: [
-              if (!showTitle)
-                Transform.translate(
-                  offset: const Offset(0, -190),
-                  child: const HomeFilterCard(
-                    isInScreen: false,
+        builder: (context, showTitle, child) => Column(
+          children: [
+            if (!showTitle)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    width: 20,
+                    height: 170,
+                    decoration: const BoxDecoration(
+                      color: AppColors.whiteColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(18.0),
+                      ),
+                    ),
                   ),
-                ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(0, 70, 0, 50),
-                child: PopularVehicles(),
+                  const Expanded(
+                    flex: 1,
+                    child: HomeFilterCard(
+                      isInScreen: false,
+                    ),
+                  ),
+                  Container(
+                    width: 20,
+                    height: 170,
+                    decoration: const BoxDecoration(
+                      color: AppColors.whiteColor,
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(18.0),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(
+                  color: Colors.white,
+                  width: 2,
+                ),
+              ),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+              child: Column(
+                children: [
+                  const PopularVehicles(),
+                  Container(
+                    margin: const EdgeInsets.only(top: 60),
+                    child: const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "You've reached the end of the road for now! 🛣️🏁",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            "We're working hard to add new cars. Check back soon for more exciting rides! 🚗💨",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

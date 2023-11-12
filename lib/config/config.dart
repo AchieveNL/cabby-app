@@ -1,7 +1,7 @@
 class AppConfig {
   static const Map<String, String> _baseUrls = {
-    'staging': 'https://cabby-service-staging-jtj2mdm6ta-ez.a.run.app',
-    'production': 'https://cabby-service-production-jtj2mdm6ta-ez.a.run.app',
+    'staging': 'https://api-staging.cabbyrentals.com',
+    'production': 'https://api.cabbyrentals.com',
   };
 
   // Set the current environment here

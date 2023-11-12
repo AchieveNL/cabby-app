@@ -36,10 +36,10 @@ class _RentalPolicyState extends State<RentalPolicy> {
   void didUpdateWidget(RentalPolicy oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.signatureData.signature != widget.signatureData.signature) {
+      widget.btnCallback(title: "Create account", isDisabled: true);
       _downloadPdf();
     }
   }
-
 
   _downloadPdf() async {
     String url = widget.signatureData.signature ?? rentalAgreementUrl;

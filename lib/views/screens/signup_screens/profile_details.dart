@@ -23,7 +23,8 @@ class ProfileDetails extends StatefulWidget {
 }
 
 class _ProfileDetailsState extends State<ProfileDetails> {
-  late TextEditingController nameController;
+  late TextEditingController firstNameController;
+  late TextEditingController lastNameController;
   late TextEditingController phoneController;
   late TextEditingController zipController;
   late TextEditingController streetController;
@@ -37,7 +38,10 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   void initState() {
     super.initState();
     // Initialize controllers with data from widget.profileData
-    nameController = TextEditingController(text: widget.profileData.name);
+    firstNameController =
+        TextEditingController(text: widget.profileData.firstName);
+    lastNameController =
+        TextEditingController(text: widget.profileData.lastName);
     phoneController = TextEditingController(text: widget.profileData.phone);
     zipController = TextEditingController(text: widget.profileData.zip);
     streetController = TextEditingController(text: widget.profileData.street);
@@ -51,7 +55,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     selectedDate = widget.profileData.dob; // initialize date
 
     // Now add listeners
-    nameController.addListener(validateForm);
+    firstNameController.addListener(validateForm);
     phoneController.addListener(validateForm);
     zipController.addListener(validateForm);
     streetController.addListener(validateForm);
@@ -66,12 +70,19 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           buildSpace(),
-          buildLabel('Name'),
+          buildLabel('First name'),
           buildSpace(),
           buildTextField(
-            controller: nameController,
+            controller: firstNameController,
             keyboardType: TextInputType.text,
-            label: 'Name',
+            label: 'First name',
+          ),
+          buildLabel('Last name'),
+          buildSpace(),
+          buildTextField(
+            controller: lastNameController,
+            keyboardType: TextInputType.text,
+            label: 'Last name',
           ),
           buildSpace(),
           buildLabel('Date of birth'),
@@ -99,7 +110,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           buildSpace(),
           buildTextField(
             controller: zipController,
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.text,
             label: 'Zip',
           ),
           buildSpace(),
@@ -241,7 +252,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       return;
     }
 
-    bool isFormValid = nameController.text.isNotEmpty &&
+    bool isFormValid = firstNameController.text.isNotEmpty &&
+        lastNameController.text.isNotEmpty &&
         zipController.text.isNotEmpty &&
         streetController.text.isNotEmpty &&
         locationController.text.isNotEmpty &&
@@ -253,7 +265,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     );
 
     SignupProfile data = SignupProfile()
-      ..name = nameController.text
+      ..firstName = firstNameController.text
+      ..lastName = lastNameController.text
       ..dob = selectedDate
       ..phone = phoneController.text
       ..city = locationController.text
@@ -266,7 +279,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
   @override
   void dispose() {
-    nameController.dispose();
+    firstNameController.dispose();
     phoneController.dispose();
     zipController.dispose();
     streetController.dispose();

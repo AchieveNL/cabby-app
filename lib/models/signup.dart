@@ -7,7 +7,8 @@ class SignupEmailPassword {
 }
 
 class SignupProfile {
-  String? name;
+  String? firstName;
+  String? lastName;
   String? phone;
   String? zip;
   String? street;

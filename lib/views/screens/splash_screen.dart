@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:cabby/config/utils.dart';
+import 'package:cabby/services/auth_service.dart';
 import 'package:cabby/state/user_provider.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +25,20 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     duration = const Duration(seconds: 3);
     loadUser().then((_) {
+      _fetchInitialData();
       timer = Timer(duration, () {
         Navigator.of(context).pushReplacementNamed("/status");
       });
     });
+  }
+
+  void _fetchInitialData() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    logger(
+        'Initializing user from splash screen: ${userProvider.user!.toJson()} and user profile as ${userProvider.userProfile!.toJson()}');
+
+    await AuthService(context).initializeUser(userProvider.user!);
+    await loadUser();
   }
 
   Future<void> loadUser() async {

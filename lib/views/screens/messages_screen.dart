@@ -4,6 +4,7 @@ import 'package:cabby/state/user_provider.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart' as provider;
 import 'package:provider/provider.dart';
@@ -24,6 +25,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
   final _supabaseClient = Supabase.instance.client;
   Stream<List<Map<String, dynamic>>>? _messageStream;
   String? _adminUserId;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -73,8 +75,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 .compareTo(DateTime.parse(b['createdAt'])));
           return filteredAndSortedData;
         });
-
     setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
   }
 
   void _sendMessage() async {
@@ -93,6 +97,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
           'recipientId': _adminUserId,
         });
         _messageController.clear();
+        _scrollToBottom();
       } catch (e) {
         logger('Error sending message: $e');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -104,10 +109,21 @@ class _MessagesScreenState extends State<MessagesScreen> {
     }
   }
 
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.minScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
           final user = userProvider.userProfile;
@@ -138,34 +154,48 @@ class _MessagesScreenState extends State<MessagesScreen> {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
                                 return const Center(
-                                    child: CircularProgressIndicator());
+                                    child: CircularProgressIndicator(
+                                        color: AppColors.primaryLightColor));
                               } else if (snapshot.hasError) {
-                                logger(snapshot.error);
                                 return Center(
                                     child: Text('Error: ${snapshot.error}'));
                               } else if (!snapshot.hasData ||
                                   snapshot.data!.isEmpty) {
-                                return const Center(
-                                    child: Text('No messages yet.'));
+                                return _buildNoMessagesPlaceholder();
                               }
 
-                              final messages = snapshot.data!
-                                ..sort((a, b) => DateTime.parse(a['createdAt'])
-                                    .compareTo(DateTime.parse(b['createdAt'])));
-                              loggerLn.i(messages);
-                              return ListView.builder(
-                                reverse:
-                                    false, // Changed this to false to not reverse the order
-                                itemCount: messages.length,
-                                itemBuilder: (context, index) {
-                                  final message =
-                                      messages[index]; // Directly use index
-                                  final bool isSentByMe = message['senderId'] ==
-                                      provider.Provider.of<UserProvider>(
-                                        context,
-                                      ).user!.id;
-                                  return _buildMessageTile(message, isSentByMe);
-                                },
+                              final messages = snapshot.data!;
+                              final allWidgets = <Widget>[
+                                _buildInstructionsWidget()
+                              ];
+
+                              DateTime? lastDate;
+                              for (var i = 0; i < messages.length; i++) {
+                                final message = messages[i];
+                                final messageDate =
+                                    DateTime.parse(message['createdAt'])
+                                        .toLocal();
+
+                                if (lastDate == null ||
+                                    !Utils.isSameDate(messageDate, lastDate)) {
+                                  allWidgets.add(_buildDateHeader(messageDate));
+                                }
+
+                                final bool isSentByMe = message['senderId'] ==
+                                    userProvider.user!.id;
+                                allWidgets.add(
+                                    _buildMessageTile(message, isSentByMe));
+                                lastDate = messageDate;
+                              }
+
+                              return ListView(
+                                reverse: true,
+                                controller: _scrollController,
+                                children: [
+                                  Column(
+                                    children: allWidgets.toList(),
+                                  ),
+                                ],
                               );
                             },
                           ),
@@ -177,6 +207,47 @@ class _MessagesScreenState extends State<MessagesScreen> {
         },
       ),
       bottomSheet: _buildMessageInputField(),
+    );
+  }
+
+  Widget _buildNoMessagesPlaceholder() {
+    return const Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Text(
+          '🤔 No messages yet.\nPlease leave a message and we will try to support you as soon as possible! 🚀',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16.0,
+            color: Colors.grey,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateHeader(DateTime date) {
+    String headerText;
+    final now = DateTime.now();
+    if (Utils.isSameDate(date, now)) {
+      headerText = 'Today';
+    } else if (Utils.isSameDate(date, now.subtract(const Duration(days: 1)))) {
+      headerText = 'Yesterday';
+    } else {
+      headerText = DateFormat('MMMM d, y', 'nl-NL').format(date);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Center(
+        child: Text(
+          headerText,
+          style: TextStyle(
+            color: Colors.grey.shade500,
+            fontSize: 12.0,
+          ),
+        ),
+      ),
     );
   }
 
@@ -282,6 +353,42 @@ class _MessagesScreenState extends State<MessagesScreen> {
               ),
             ),
           )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInstructionsWidget() {
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            "How to Send a Message:",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 15),
+          Text(
+            "✉️ Write your message in the text box below.\n"
+            "🕒 Responses can take up to 48 hours.\n"
+            "📝 Provide as much information as possible.\n"
+            "😊 Feel free to use emojis for expression.\n"
+            "🔍 Write clearly to help us understand your needs.\n\n"
+            "We are here to help you!",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              color:
+                  Colors.black.withOpacity(0.7), // Adjust text color as needed
+            ),
+          ),
         ],
       ),
     );

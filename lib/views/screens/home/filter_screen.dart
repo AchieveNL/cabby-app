@@ -18,7 +18,7 @@ class _FilterScreenState extends State<FilterScreen> {
     return Scaffold(
       appBar: _buildAppBar(context),
       body: Container(
-        padding: const EdgeInsets.only(top: 50),
+        padding: const EdgeInsets.only(top: 10),
         decoration: const BoxDecoration(
           color: AppColors.primaryLightColor,
         ),
@@ -30,37 +30,24 @@ class _FilterScreenState extends State<FilterScreen> {
               topRight: Radius.circular(30.0),
             ),
           ),
-          padding: const EdgeInsets.only(top: 20),
-          child: Column(
-            children: [
-              const Expanded(
-                flex: 2,
-                child: HomeFilterCard(isInScreen: true),
+          padding: const EdgeInsets.only(top: 30),
+          child: const HomeFilterCard(isInScreen: true),
+        ),
+      ),
+      bottomSheet: SizedBox(
+        height: 70,
+        child: PrimaryButton(
+          btnText: 'Find a car',
+          radius: 10,
+          width: screenSize.width * 0.95,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const VehiclesScreen(),
               ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    PrimaryButton(
-                      btnText: 'Find a car',
-                      radius: 10,
-                      width: screenSize.width * 0.95,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const VehiclesScreen(),
-                          ),
-                        );
-                      },
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

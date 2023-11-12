@@ -1,5 +1,4 @@
 import 'package:cabby/config/utils.dart';
-import 'package:cabby/models/user.dart';
 import 'package:cabby/state/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,21 +11,23 @@ class StatusRouterScreen extends StatelessWidget {
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
         final user = userProvider.user;
-        logger("Saved User: $user");
-        if (user == null) {
+        final userProfile = userProvider.userProfile;
+        logger(
+            "Saved User: ${user?.toJson()} and user profile: ${userProfile?.toJson()}");
+        if (userProfile == null) {
           return _navigateToScreen(context, "/login");
         } else {
-          switch (user.status) {
-            case UserStatus.REQUIRE_REGISTRATION_FEE:
+          switch (userProfile.status) {
+            case "REQUIRE_REGISTRATION_FEE":
               return _navigateToScreen(context, "/pay-deposit");
-            case UserStatus.PENDING:
+            case "PENDING":
               return _navigateToScreen(context, "/verification");
-            case UserStatus.BLOCKED:
+            case "BLOCKED":
               return _navigateToScreen(context, "/blocked");
-            case UserStatus.REJECTED:
+            case "REJECTED":
               return _navigateToScreen(context, "/rejected");
-            case UserStatus.ACTIVE:
-            case UserStatus.APPROVED:
+            case "ACTIVE":
+            case "APPROVED":
               return _navigateToScreen(context, "/home");
             default:
               _showErrorDialog(context);

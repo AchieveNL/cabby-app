@@ -162,4 +162,37 @@ class OrdersService {
       rethrow;
     }
   }
+
+  Future<bool> unlockVehicleOrder(String orderId) async {
+    try {
+      logger("unlockVehicleOrder");
+      Response response = await _dio.post('/order/$orderId/unlockVehicle');
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to unlockVehicle order');
+      }
+    } catch (error) {
+      logger(error);
+      rethrow;
+    }
+  }
+
+  Future<bool> lockVehicleOrder(String orderId) async {
+    logger("unlockVehicleOrder");
+    try {
+      Response response = await _dio.post('/order/$orderId/lockVehicle');
+      logger("lockVehicleOrder");
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to unlockVehicle order');
+      }
+    } catch (error) {
+      logger(error);
+      rethrow;
+    }
+  }
 }

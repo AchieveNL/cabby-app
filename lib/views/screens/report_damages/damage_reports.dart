@@ -24,6 +24,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
   final TextEditingController _reportController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
   final List<XFile> _imageFiles = [];
+  bool _isSubmitting = false;
 
   Future<void> _pickImage(ImageSource source) async {
     try {
@@ -45,6 +46,9 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
   }
 
   void _submitDamageReport() async {
+    setState(() {
+      _isSubmitting = true;
+    });
     List<File> imageFiles =
         _imageFiles.map((xfile) => File(xfile.path)).toList();
     try {
@@ -60,6 +64,10 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
     } catch (e) {
       // ignore: use_build_context_synchronously
       ToastUtil.showToast(context, 'Failed to send damage report');
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
     }
   }
 
@@ -177,6 +185,8 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
               btnText: "Submit Damage Report",
               onPressed: _submitDamageReport,
               width: screenSize.width,
+              isDisabled: _isSubmitting,
+              isLoading: _isSubmitting,
             ),
             const SizedBox(height: 10),
             SecondaryButton(

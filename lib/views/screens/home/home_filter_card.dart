@@ -1,5 +1,7 @@
 import 'package:cabby/config/theme.dart';
-import 'package:cabby/data/data.dart';
+import 'package:cabby/config/utils.dart';
+import 'package:cabby/models/vehicle.dart';
+import 'package:cabby/services/vehicle_service.dart';
 import 'package:cabby/views/screens/vehicles_screens/vehicles_screen.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/decoration.dart';
@@ -9,7 +11,10 @@ import 'package:intl/intl.dart';
 
 class HomeFilterCard extends StatefulWidget {
   final bool isInScreen;
-  const HomeFilterCard({super.key, required this.isInScreen});
+  const HomeFilterCard({
+    super.key,
+    required this.isInScreen,
+  });
 
   @override
   _HomeFilterCardState createState() => _HomeFilterCardState();
@@ -24,14 +29,32 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
 
   DateTime? selectedDate;
 
+  List<AvailableVehicleModels> availableVehicles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAvailableVehicles();
+  }
+
+  void fetchAvailableVehicles() async {
+    try {
+      availableVehicles = await VehicleService().getAvailableVehicles();
+      setState(() {});
+    } catch (e) {
+      logger("Error fetching available vehicles: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Center(
       child: Container(
         padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15), topRight: Radius.circular(15)),
           color: Colors.white,
         ),
         child: Column(
@@ -122,8 +145,7 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
 
   Widget buildDatePickerWidget() {
     DateTime now = DateTime.now();
-    DateTime startOfDay =
-        DateTime(now.year, now.month, now.day); // Start of the day
+    DateTime today = DateTime(now.year, now.month, now.day); // Today's date
 
     return TextFormField(
       controller: dateController,
@@ -138,9 +160,10 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
               color: Colors.white,
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
-                initialDateTime: startOfDay, // Use startOfDay
-                minimumDate: startOfDay,
-                maximumDate: startOfDay.add(const Duration(days: 30)),
+                initialDateTime: today,
+                minimumDate: today, // Set minimumDate to today
+                maximumDate: today.add(
+                    const Duration(days: 365)), // Optional: Set a maximum date
                 onDateTimeChanged: (DateTime dateTime) {
                   setState(() {
                     selectedDate = dateTime;
@@ -177,10 +200,23 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
       keyboardType: TextInputType.text,
       readOnly: true,
       onTap: () async {
-        TimeOfDay? time = await showTimePicker(
+        TimeOfDay? time = await showDialog(
           context: context,
-          initialTime: TimeOfDay.now(),
+          builder: (BuildContext context) {
+            return Theme(
+              data: ThemeData(
+                colorScheme: const ColorScheme.light(
+                  primary: AppColors.primaryColor,
+                ),
+                dialogBackgroundColor: Colors.white,
+              ),
+              child: TimePickerDialog(
+                initialTime: TimeOfDay.now(),
+              ),
+            );
+          },
         );
+
         if (time != null) {
           setState(() {
             timeController.text = time.format(context);
@@ -217,7 +253,7 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
               Expanded(
                 child: ListView.separated(
                   shrinkWrap: true,
-                  itemCount: vehicles.length, // Assuming you have a cars list
+                  itemCount: availableVehicles.length,
                   separatorBuilder: (context, i) {
                     return buildSpace();
                   },
@@ -225,17 +261,18 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
                     return GestureDetector(
                       onTap: () {
                         setState(() {
-                          // You might need to update this logic based on your use case.
-                          carSelectorController.text = vehicles[index];
+                          carSelectorController.text =
+                              '${availableVehicles[index].companyName} ${availableVehicles[index].model}';
                           Navigator.of(context).pop();
                         });
                       },
                       child: Text(
-                        vehicles[index],
+                        '${availableVehicles[index].companyName} ${availableVehicles[index].model}',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          fontSize: 16,
-                          color: AppColors.darkGreyColor,
+                          fontSize: 18,
+                          color: AppColors.blackColor,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     );

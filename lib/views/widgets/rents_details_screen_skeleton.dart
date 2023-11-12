@@ -7,6 +7,7 @@ class RentsDetailsScreenSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Shimmer.fromColors(
           baseColor: Colors.grey[300]!,

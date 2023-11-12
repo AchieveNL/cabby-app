@@ -32,4 +32,21 @@ class VehicleService {
       throw Exception('Failed to load vehicles.');
     }
   }
+
+  Future<List<AvailableVehicleModels>> getAvailableVehicles() async {
+    try {
+      final response = await _dio.get('/available-models');
+      if (response.statusCode == 200) {
+        final List<dynamic> payload = response.data['payload'];
+        return payload
+            .map((json) => AvailableVehicleModels.fromJson(json))
+            .toList();
+      } else {
+        throw Exception('Failed to load available vehicles.');
+      }
+    } catch (error) {
+      logger(error.toString());
+      throw Exception('Failed to load available vehicles.');
+    }
+  }
 }

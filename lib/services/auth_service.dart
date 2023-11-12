@@ -33,6 +33,7 @@ class AuthService {
     } catch (e) {
       logger(
           'Error while getting user profile: $e'); // Log any error while getting the user profile
+      this.signOut();
     }
   }
 

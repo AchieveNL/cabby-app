@@ -31,7 +31,6 @@ class _PopularVehiclesState extends State<PopularVehicles> {
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           children: [
-            // Always showing the title
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -63,14 +62,15 @@ class _PopularVehiclesState extends State<PopularVehicles> {
                 ),
               ],
             ),
-            // Conditional content
             if (snapshot.connectionState == ConnectionState.waiting)
               ...List.generate(
                 5,
                 (index) => const VehicleCardSkeleton(),
               )
             else if (snapshot.hasError)
-              Text('Error: ${snapshot.error}')
+              const Center(
+                child: Text('Something went wrong!'),
+              )
             else
               ...snapshot.data!.map((vehicle) => VehicleCard(vehicle: vehicle))
           ],

@@ -6,14 +6,11 @@ import 'package:cabby/models/signup.dart';
 import 'package:cabby/views/screens/signup_screens/camera_access_screen.dart';
 import 'package:cabby/views/screens/signup_screens/camera_screen.dart';
 import 'package:cabby/views/widgets/decoration.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:http/http.dart' as http;
 
 class DriverLicenceScreen extends StatefulWidget {
   final Function(SignupDriverLicence) dataCallback;
@@ -49,48 +46,21 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
   }
 
   Future<void> pickImage(String licenseSide) async {
-    if (kDebugMode) {
-      String url = licenseSide == 'front'
-          ? 'https://storage.googleapis.com/cabby-bucket/images/front.png'
-          : 'https://storage.googleapis.com/cabby-bucket/images/back.png';
+    final status = await Permission.camera.status;
 
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final bytes = response.bodyBytes;
-        String tempPath = (await getTemporaryDirectory()).path;
-        File tempFile = File('$tempPath/$licenseSide.png')
-          ..writeAsBytesSync(bytes);
-
-        setState(() {
-          if (licenseSide == 'front') {
-            driverLicenseFront = tempFile;
-          } else {
-            driverLicenseBack = tempFile;
-          }
-        });
-
-        updateParentWidget();
-      } else {
-        throw Exception('Failed to load image.');
-      }
+    if (status.isGranted) {
+      _navigateToCameraScreen(licenseSide);
     } else {
-      final status = await Permission.camera.status;
-
-      if (status.isGranted) {
-        _navigateToCameraScreen(licenseSide);
-      } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CameraAccessScreen(
-              onCameraAccessGranted: () {
-                _navigateToCameraScreen(licenseSide);
-              },
-            ),
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CameraAccessScreen(
+            onCameraAccessGranted: () {
+              _navigateToCameraScreen(licenseSide);
+            },
           ),
-        );
-      }
+        ),
+      );
     }
   }
 

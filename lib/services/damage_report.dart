@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cabby/config/config.dart';
 import 'package:cabby/config/utils.dart';
+import 'package:cabby/models/damage_report.dart';
 import 'package:cabby/services/api_service.dart';
 import 'package:cabby/services/upload_service.dart';
 import 'package:cookie_jar/cookie_jar.dart';
@@ -45,6 +46,21 @@ class DamageReportService {
       return response.statusCode == 200;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<List<DamageReport>> fetchDamageReports(String vehicleId) async {
+    try {
+      final response = await _dio.get('/vehicle/$vehicleId');
+      logger(response);
+      if (response.statusCode == 200) {
+        List<dynamic> reportList = response.data['payload'];
+        return reportList.map((json) => DamageReport.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load damage reports');
+      }
+    } catch (e) {
+      throw Exception('Failed to load damage reports: $e');
     }
   }
 }

@@ -57,13 +57,31 @@ class ProfileService {
   }
 
   Future<UserProfileModel> getCurrentProfile() async {
-    final response = await _dio.get('/current');
-    logger(
-        'Received response for current profile: ${response.data}'); // log the response data
+    try {
+      // Log the request headers
+      logger('Request headers: ${_dio.options.headers}');
 
-    if (response.data != null && response.statusCode == 200) {
-      return UserProfileModel.fromJson(response.data['payload']);
+      // Await the result of loadForRequest to get the cookies
+      List<Cookie> cookies = await _cookieJar
+          .loadForRequest(Uri.parse('${AppConfig.apiUrl}/profile/current'));
+      logger('Cookies being sent: $cookies');
+
+      final response = await _dio.get('/current');
+
+      // Log the response details
+      logger(
+          'Received response for current profile: Status: ${response.statusCode}, Data: ${response.data}, Headers: ${response.headers}');
+
+      if (response.data != null && response.statusCode == 200) {
+        return UserProfileModel.fromJson(response.data['payload']);
+      } else {
+        throw Exception(
+            'Failed to load user profile with status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Log exceptions
+      logger('Error in getCurrentProfile: $e');
+      throw e;
     }
-    throw Exception('Failed to load user profile');
   }
 }

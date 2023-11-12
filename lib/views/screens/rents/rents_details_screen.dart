@@ -5,12 +5,13 @@ import 'package:cabby/models/order.dart';
 import 'package:cabby/models/vehicle.dart';
 import 'package:cabby/services/order_service.dart';
 import 'package:cabby/services/payment_service.dart';
-import 'package:cabby/views/screens/damage_reports.dart';
+import 'package:cabby/views/screens/report_damages/damage_reports.dart';
 import 'package:cabby/views/screens/order_screens/widgets/date_time_picker_button.dart';
 import 'package:cabby/views/screens/pdf_viewer_screen.dart';
 import 'package:cabby/views/screens/webview_screen.dart';
 import 'package:cabby/views/widgets/app_bar.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
+import 'package:cabby/views/widgets/cards.dart';
 import 'package:cabby/views/widgets/rents_details_screen_skeleton.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -111,6 +112,10 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
                       _buildOrderDetails(
                         orderDetails: orderDetails,
                       ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      buildDamageReportsCard(context, orderDetails.vehicle.id),
                       const SizedBox(
                         height: 30,
                       ),
@@ -482,6 +487,7 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
   }
 
   Widget _buildActionView({required OrderDetails orderDetails}) {
+    logger("is vehicle unlocked: ${orderDetails.isVehicleUnlocked}");
     Size size = MediaQuery.of(context).size;
     DateTime now = DateTime.now();
 
@@ -502,18 +508,23 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
           now.isAfter(DateTime.parse(orderDetails.order.rentalStartDate)) &&
               now.isBefore(DateTime.parse(orderDetails.order.rentalEndDate));
 
-      // Check if the order is in the rental period and confirmed
-      if (status == "confirmed" && isRentalPeriodActive) {
+      // Check if the vehicle is unlocked and the order is confirmed
+      if (status == "confirmed" &&
+          !isRentalPeriodActive &&
+          !orderDetails.isVehicleUnlocked) {
         return createActionButton(
           "Unlock",
-          () {}, // Add unlock logic here
+          () {
+            OrdersService().unlockVehicleOrder(orderDetails.order.id);
+            orderDetailsFuture =
+                OrdersService().fetchOrderDetails(widget.orderId);
+          }, // Add unlock logic here
           width: 0.3,
           prefixIcon:
               SvgPicture.asset("assets/svg/key.svg", width: 20, height: 20),
+          isDisabled: true,
         );
       }
-
-      // Check if the vehicle is unlocked and the order is confirmed
       if (status == "confirmed" && orderDetails.isVehicleUnlocked) {
         return createActionButton(
           "Report Damages",
@@ -527,6 +538,21 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
         );
       }
 
+      // Check if the order is in the rental period and confirmed
+      if (status == "confirmed" && isRentalPeriodActive) {
+        return createActionButton(
+          "Unlock",
+          () {
+            OrdersService().unlockVehicleOrder(orderDetails.order.id);
+            orderDetailsFuture =
+                OrdersService().fetchOrderDetails(widget.orderId);
+          }, // Add unlock logic here
+          width: 0.3,
+          prefixIcon:
+              SvgPicture.asset("assets/svg/key.svg", width: 20, height: 20),
+        );
+      }
+
       // Check if the rental period has ended
       if (now.isAfter(DateTime.parse(orderDetails.order.rentalEndDate))) {
         return createActionButton(
@@ -535,7 +561,7 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
             OrdersService().completeOrder(orderDetails.order.id);
             orderDetailsFuture =
                 OrdersService().fetchOrderDetails(widget.orderId);
-            // Add logic to lock the car again, if needed
+            OrdersService().lockVehicleOrder(orderDetails.order.id);
           },
           width: 0.3,
         );
@@ -594,12 +620,11 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
           opacity: 0.5,
           child: RentsDetailsScreenSkeleton(),
         ),
-        Center(child: CircularProgressIndicator()),
       ],
     );
   }
 
-  void _orderProccedToPayment(BuildContext context, String orderId) async {
+  void orderProccedToPayment(BuildContext context, String orderId) async {
     try {
       final checkoutUrl = await PaymentService().createOrderPaymentUrl(orderId);
 

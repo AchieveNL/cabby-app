@@ -25,6 +25,7 @@ import 'package:cabby/views/screens/signup_screens/signature_screen.dart';
 import 'package:cabby/views/screens/webview_screen.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/decoration.dart';
+import 'package:cabby/views/widgets/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -190,7 +191,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         isLoading: isButtonLoading,
                         isDisabled: isButtonDisabled,
                         btnText: nextBtnTitle,
-                        onPressed: onNext,
+                        onPressed: !isButtonDisabled ? onNext : () {},
                       ),
                       SizedBox(height: screenSize.height * 0.02),
                     ],
@@ -312,9 +313,12 @@ class _SignupScreenState extends State<SignupScreen> {
   Future<void> _handleCreateAccount() async {
     setState(() {
       isButtonLoading = true;
+      isButtonDisabled = true;
     });
 
     try {
+      // ignore: use_build_context_synchronously
+      ToastUtil.showToast(context, "Creating your account...");
       logger("Creating user...");
       await _createUser(data: emailPasswordData);
       logger("User created successfully!");
@@ -351,12 +355,15 @@ class _SignupScreenState extends State<SignupScreen> {
 
         await authService.initializeUser(user);
       }
+      // ignore: use_build_context_synchronously
+      ToastUtil.showToast(context, "Your account has been created.");
       _incrementStep();
     } catch (e) {
       logger("Error in handleCreateAccount: $e");
     } finally {
       setState(() {
         isButtonLoading = false;
+        isButtonDisabled = false;
       });
     }
   }
@@ -403,15 +410,14 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Future<void> _createProfile(
       {required SignupProfile data, required String signature}) async {
-    List<String> nameParts = data.name!.split(' ');
-    String firstName = nameParts.first;
-    String lastName =
-        nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+    String firstName = data.firstName!;
+    String lastName = data.lastName!;
+    String fullName = "$firstName $lastName";
 
     final userProfile = UserProfile(
       city: data.city as String,
       fullAddress: data.street as String,
-      fullName: data.name as String,
+      fullName: fullName,
       lastName: lastName,
       firstName: firstName,
       phoneNumber: data.phone as String,

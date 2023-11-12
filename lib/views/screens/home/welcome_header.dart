@@ -13,7 +13,7 @@ class WelcomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20.0, 70.0, 20.0, 20.0),
+      padding: const EdgeInsets.fromLTRB(20.0, 70.0, 20.0, 0.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,

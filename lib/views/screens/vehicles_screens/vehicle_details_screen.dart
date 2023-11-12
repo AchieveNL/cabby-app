@@ -3,6 +3,7 @@ import 'package:cabby/config/theme.dart';
 import 'package:cabby/models/vehicle.dart';
 import 'package:cabby/views/screens/order_screens/check_vehicle_availability.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
+import 'package:cabby/views/widgets/cards.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -34,7 +35,7 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
               topRight: Radius.circular(30.0),
             ),
           ),
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 90),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -58,6 +59,10 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
                   height: 30,
                 ),
                 _buildDetailContainers(),
+                const SizedBox(
+                  height: 30,
+                ),
+                buildDamageReportsCard(context, widget.vehicle.id),
                 const SizedBox(
                   height: 30,
                 ),

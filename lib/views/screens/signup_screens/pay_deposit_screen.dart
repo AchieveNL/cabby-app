@@ -58,7 +58,7 @@ class _PayDepositScreenState extends State<PayDepositScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/pay_deposit.png',
+                      'assets/images/pay_deposit.png',
                       width: 128,
                       height: 128,
                     ),
