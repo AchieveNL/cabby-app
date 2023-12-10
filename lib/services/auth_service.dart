@@ -3,6 +3,7 @@ import 'package:cabby/models/profile.dart';
 import 'package:cabby/models/user.dart';
 import 'package:cabby/services/api_service.dart';
 import 'package:cabby/services/profile_service.dart';
+import 'package:cabby/services/user_service.dart';
 import 'package:cabby/state/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +36,11 @@ class AuthService {
           'Error while getting user profile: $e'); // Log any error while getting the user profile
       this.signOut();
     }
+  }
+
+  void deleteAccount() async {
+    await UserService().deleteUser();
+    AuthService(context).signOut();
   }
 
   void signOut() async {

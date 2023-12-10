@@ -160,6 +160,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               height: MediaQuery.of(context).copyWith().size.height / 3,
               color: Colors.white,
               child: CupertinoDatePicker(
+                dateOrder: DatePickerDateOrder.dmy,
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: DateTime.now(),
                 minimumDate: DateTime(1940),

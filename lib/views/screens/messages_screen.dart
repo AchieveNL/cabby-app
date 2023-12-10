@@ -4,6 +4,7 @@ import 'package:cabby/state/user_provider.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart' as provider;
@@ -30,8 +31,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _fetchAdminUserId();
+    initializeDateFormatting('nl_NL', null).then((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _fetchAdminUserId();
+      });
     });
   }
 

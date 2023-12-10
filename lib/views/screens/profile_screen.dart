@@ -83,11 +83,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   color: AppColors.redColor,
                                 ),
                                 height: 50,
-                                onPressed: () {},
-                                btnText: 'Desactivate Account',
+                                onPressed: () {
+                                  _showDeleteAccountDialog();
+                                },
+                                btnText: 'Deactivate Account',
                               ),
                               const Spacer(),
-                              Text(
+                              const Text(
                                 "Cabby rentals",
                                 style: TextStyle(
                                   color: AppColors.primaryColor,
@@ -140,6 +142,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         SizedBox(height: screenSize.height * 0.02),
       ],
+    );
+  }
+
+  void _showDeleteAccountDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Deactivation'),
+          content: const Text(
+              'Are you sure you want to deactivate your account? This action cannot be undone.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel',
+                  style: TextStyle(color: AppColors.primaryColor)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Delete',
+                  style: TextStyle(color: AppColors.redColor)),
+              onPressed: () {
+                // Call the function to delete the account
+                AuthService(context).deleteAccount();
+                Navigator.of(context).pop(); // Dismiss the dialog
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

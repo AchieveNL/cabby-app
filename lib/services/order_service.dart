@@ -83,6 +83,11 @@ class OrdersService {
       logger(response);
 
       if (response.statusCode == 201) {
+        if (response.data["payload"]['error'] != null) {
+          return {
+            'error': response.data["payload"]['error'],
+          };
+        }
         return {
           'order': response.data["payload"]['order'],
           'checkoutUrl': response.data["payload"]['checkoutUrl'],

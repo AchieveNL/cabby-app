@@ -172,6 +172,7 @@ class _EmailPasswordState extends State<EmailPassword> {
                 valueListenable: emailValidationNotifier,
                 builder: (context, state, child) {
                   Widget? suffixIcon;
+                  String? errorMessage;
                   if (state == EmailValidationState.Loading) {
                     suffixIcon = SizedBox(
                       width: 16,
@@ -182,30 +183,36 @@ class _EmailPasswordState extends State<EmailPassword> {
                       ),
                     );
                   } else if (state == EmailValidationState.DoesntExist) {
-                    suffixIcon = const Icon(Icons.check,
-                        color: Colors.green); // green check mark
+                    suffixIcon = const Icon(Icons.check, color: Colors.green);
                   } else if (state == EmailValidationState.Exists) {
-                    suffixIcon = const Icon(Icons.error,
-                        color: Colors.red); // error icon
+                    suffixIcon = const Icon(Icons.error, color: Colors.red);
+                    errorMessage = 'Email already exists';
                   }
-                  return TextFormField(
-                    focusNode: emailFocusNode,
-                    controller: controller,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: isPassword
-                        ? TextInputType.visiblePassword
-                        : TextInputType.emailAddress,
-                    validator: validator as String? Function(String?),
-                    obscureText: isPassword &&
-                        (label == 'Password'
-                            ? !showPassword
-                            : !showConfirmPassword),
-                    style: const TextStyle(
-                        color: AppColors.blackColor, fontSize: 16),
-                    decoration: isPassword
-                        ? _buildPasswordDecoration(label)
-                        : DecorationInputs.textBoxInputDecoration(
-                            label: label, suffixIcon: suffixIcon),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextFormField(
+                        focusNode: emailFocusNode,
+                        controller: controller,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        keyboardType: isPassword
+                            ? TextInputType.visiblePassword
+                            : TextInputType.emailAddress,
+                        validator: (value) {
+                          return errorMessage ?? validator(value);
+                        },
+                        obscureText: isPassword &&
+                            (label == 'Password'
+                                ? !showPassword
+                                : !showConfirmPassword),
+                        style: const TextStyle(
+                            color: AppColors.blackColor, fontSize: 16),
+                        decoration: isPassword
+                            ? _buildPasswordDecoration(label)
+                            : DecorationInputs.textBoxInputDecoration(
+                                label: label, suffixIcon: suffixIcon),
+                      ),
+                    ],
                   );
                 },
               )
@@ -214,7 +221,7 @@ class _EmailPasswordState extends State<EmailPassword> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 keyboardType: isPassword
                     ? TextInputType.visiblePassword
-                    : TextInputType.emailAddress,
+                    : TextInputType.text,
                 validator: validator as String? Function(String?),
                 obscureText: isPassword &&
                     (label == 'Password'

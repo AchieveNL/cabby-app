@@ -143,6 +143,11 @@ class _OrderVehicleState extends State<OrderVehicle> {
         rentalStartDate: widget.startDate,
         rentalEndDate: widget.endDate,
       );
+
+      if (result["error"] != null) {
+        // ignore: use_build_context_synchronously
+        return _showCustomDialog(context);
+      }
       final checkoutUrl = result['checkoutUrl'];
 
       // ignore: use_build_context_synchronously
@@ -157,8 +162,51 @@ class _OrderVehicleState extends State<OrderVehicle> {
         ),
       );
     } catch (error) {
-      // Handle error, perhaps show an error message to the user
       logger(error);
     }
+  }
+
+  void _showCustomDialog(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+          side: const BorderSide(color: Colors.red, width: 2),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline_rounded,
+                color: Colors.red, size: 64),
+            const SizedBox(height: 16),
+            const Center(
+              child: Text('We are sorry.. :(',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            ),
+            const SizedBox(height: 8),
+            const Center(
+              child: Text(
+                'You cannot order more than 2 vehicles at the same time.',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 16),
+            PrimaryButton(
+              width: screenSize.width * 0.7, // Adjust width as needed
+              height: 50,
+              btnText: 'Ok',
+              onPressed: () {
+                Navigator.of(context).pushReplacementNamed("/home");
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
