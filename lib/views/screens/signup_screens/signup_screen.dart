@@ -11,6 +11,7 @@ import 'package:cabby/services/licence_service.dart';
 import 'package:cabby/services/payment_service.dart';
 import 'package:cabby/services/permit_service.dart';
 import 'package:cabby/services/profile_service.dart';
+import 'package:cabby/services/third_party_service.dart';
 import 'package:cabby/services/upload_service.dart';
 import 'package:cabby/services/user_service.dart';
 import 'package:cabby/views/screens/signup_screens/driver_license.dart';
@@ -358,6 +359,9 @@ class _SignupScreenState extends State<SignupScreen> {
       // ignore: use_build_context_synchronously
       ToastUtil.showToast(context, "Your account has been created.");
       _incrementStep();
+      logger("Verifying user info...");
+      await verifyUserInfo();
+      logger("User info verified successfully!");
     } catch (e) {
       logger("Error in handleCreateAccount: $e");
     } finally {
@@ -408,6 +412,10 @@ class _SignupScreenState extends State<SignupScreen> {
     await userService.signup(data.email!, data.password!);
   }
 
+  Future<void> verifyUserInfo() async {
+    await ThirdPartyService().verifyUserInfo();
+  }
+
   Future<void> _createProfile(
       {required SignupProfile data, required String signature}) async {
     String firstName = data.firstName!;
@@ -446,6 +454,7 @@ class _SignupScreenState extends State<SignupScreen> {
         driverLicenseBack: driverLicenseBackUrl,
         driverLicenseFront: driverLicenseFrontUrl,
         driverLicenseExpiry: data.expiryDate as String,
+        bsnNumber: data.bsnNumber as String,
       );
 
       await licenceService.createDriverLicense(driverLicenseRequest);

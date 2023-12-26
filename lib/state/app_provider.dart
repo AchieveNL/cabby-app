@@ -18,4 +18,15 @@ class AppProvider with ChangeNotifier {
     _hasSeenOnboarding = true;
     notifyListeners();
   }
+
+  Future<void> saveTokenLocally(String token) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fcm_token', token);
+    notifyListeners();
+  }
+
+  Future<String?> getLocalToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('fcm_token');
+  }
 }

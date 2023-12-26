@@ -1,7 +1,25 @@
 import 'package:cabby/config/utils.dart';
+import 'package:cabby/services/supabase.dart';
+import 'package:cabby/state/app_provider.dart';
 import 'package:cabby/state/user_provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+Future<void> updateTokenIfNeeded(BuildContext context) async {
+  final appProvider = Provider.of<AppProvider>(context, listen: false);
+  String? newToken = await FirebaseMessaging.instance.getToken();
+  String? oldToken = await appProvider.getLocalToken();
+  String? userId = Provider.of<UserProvider>(context, listen: false).user?.id;
+
+  logger('newToken: ${newToken}, oldToken: ${oldToken}, userId: ${userId}');
+
+  if (newToken != null && userId != null) {
+    logger("Saving new token to database");
+    saveTokenToDatabase(newToken, userId);
+    await appProvider.saveTokenLocally(newToken!);
+  }
+}
 
 class StatusRouterScreen extends StatelessWidget {
   const StatusRouterScreen({super.key});
@@ -17,6 +35,7 @@ class StatusRouterScreen extends StatelessWidget {
         if (userProfile == null) {
           return _navigateToScreen(context, "/login");
         } else {
+          updateTokenIfNeeded(context);
           switch (userProfile.status) {
             case "REQUIRE_REGISTRATION_FEE":
               return _navigateToScreen(context, "/pay-deposit");

@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:cabby/config/theme.dart';
+import 'package:cabby/config/utils.dart';
 import 'package:cabby/models/signup.dart';
 import 'package:cabby/views/screens/signup_screens/camera_access_screen.dart';
 import 'package:cabby/views/screens/signup_screens/camera_screen.dart';
@@ -32,7 +33,9 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
   File? driverLicenseFront;
   File? driverLicenseBack;
   String? expiryDate;
+  String? bsnNumber;
   final TextEditingController expiryDateController = TextEditingController();
+  final TextEditingController bsnNumberController = TextEditingController();
 
   @override
   void initState() {
@@ -40,9 +43,16 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
     driverLicenseFront = widget.driverLicenceData.driverLicenseFront;
     driverLicenseBack = widget.driverLicenceData.driverLicenseBack;
     expiryDate = widget.driverLicenceData.expiryDate;
+    bsnNumber = widget.driverLicenceData.bsnNumber;
     if (expiryDate != null) {
       expiryDateController.text = expiryDate!;
+      bsnNumberController.text = bsnNumber!;
     }
+
+    bsnNumberController.addListener(() {
+      bsnNumber = bsnNumberController.text;
+      updateParentWidget();
+    });
   }
 
   Future<void> pickImage(String licenseSide) async {
@@ -88,12 +98,18 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
   void updateParentWidget() {
     final isDisabled = driverLicenseFront == null ||
         driverLicenseBack == null ||
-        (expiryDate == null || expiryDate!.isEmpty);
+        (expiryDate == null || expiryDate!.isEmpty) ||
+        (bsnNumber == null || bsnNumber!.isEmpty);
 
     widget.dataCallback(SignupDriverLicence()
       ..driverLicenseFront = driverLicenseFront
       ..driverLicenseBack = driverLicenseBack
-      ..expiryDate = expiryDate);
+      ..expiryDate = expiryDate
+      ..bsnNumber = bsnNumber);
+
+    logger({expiryDate, driverLicenseBack, driverLicenseFront, bsnNumber});
+
+    logger(isDisabled);
 
     widget.btnCallback(
       title: isDisabled ? 'Next' : 'Submit',
@@ -107,6 +123,13 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
       child: Column(
         children: <Widget>[
           ..._buildSection(
+              "BSN number",
+              buildTextField(
+                controller: bsnNumberController,
+                keyboardType: TextInputType.text,
+                label: 'BSN number',
+              )),
+          ..._buildSection(
               "Driver's License expire date", buildDatePickerWidget()),
           ..._buildSection("Driver's License photo (front side)",
               _buildLicenseContainer(driverLicenseFront, 'front')),
@@ -114,6 +137,25 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
               _buildLicenseContainer(driverLicenseBack, 'back')),
         ],
       ),
+    );
+  }
+
+  Widget buildSpace({double height = 10}) => SizedBox(height: height);
+
+  Widget buildLabel(String text) => Text(text);
+
+  Widget buildTextField({
+    required TextEditingController controller,
+    required TextInputType keyboardType,
+    required String label,
+    Function()? onTap,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      onTap: onTap,
+      style: const TextStyle(color: AppColors.blackColor, fontSize: 16),
+      decoration: DecorationInputs.textBoxInputDecoration(label: label),
     );
   }
 

@@ -21,6 +21,7 @@ class SignupDriverLicence {
   File? driverLicenseFront;
   File? driverLicenseBack;
   String? expiryDate;
+  String? bsnNumber;
 }
 
 class SignupPermitDetails {

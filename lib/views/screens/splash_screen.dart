@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cabby/config/utils.dart';
+import 'package:cabby/firebase_messaging.dart';
 import 'package:cabby/services/auth_service.dart';
 import 'package:cabby/state/user_provider.dart';
 import 'package:cabby/views/widgets/decoration.dart';
@@ -30,6 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.of(context).pushReplacementNamed("/status");
       });
     });
+    setupNotification();
   }
 
   void _fetchInitialData() async {

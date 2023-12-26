@@ -10,7 +10,9 @@ import 'package:cabby/views/screens/order_screens/widgets/terms_and_conditions.d
 import 'package:cabby/views/screens/order_screens/widgets/vehicle_card.dart';
 import 'package:cabby/views/screens/webview_screen.dart';
 import 'package:cabby/views/widgets/buttons/buttons.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class OrderVehicle extends StatefulWidget {
   final DateTime startDate;
@@ -125,7 +127,7 @@ class _OrderVehicleState extends State<OrderVehicle> {
           ),
           PrimaryButton(
             onPressed: () {
-              _createOrderProccedToPayment(context);
+              _createOrderProceedToPayment(context);
             },
             btnText: "Proceed to Payment",
             width: size.width * 0.5,
@@ -135,36 +137,76 @@ class _OrderVehicleState extends State<OrderVehicle> {
     );
   }
 
-  void _createOrderProccedToPayment(BuildContext context) async {
-    try {
-      final ordersService = OrdersService();
-      final result = await ordersService.createOrder(
-        vehicleId: widget.vehicle.id,
-        rentalStartDate: widget.startDate,
-        rentalEndDate: widget.endDate,
-      );
-
-      if (result["error"] != null) {
-        // ignore: use_build_context_synchronously
-        return _showCustomDialog(context);
-      }
-      final checkoutUrl = result['checkoutUrl'];
-
-      // ignore: use_build_context_synchronously
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => WebviewScreen(
-            url: checkoutUrl,
-            navigationDelegate: orderPaymentRedirect(context: context),
-            title: "Order payment",
+  void _showOrderLimitDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Order Limit Reached'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              SvgPicture.asset('assets/images/attention.png'), // Replace with your SVG asset
+              const SizedBox(height: 20),
+              const Text('We are sorry, but you cannot order more than 2 vehicles at the same time.'),
+            ],
           ),
         ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+          ),
+        ],
       );
-    } catch (error) {
-      logger(error);
+    },
+  );
+}
+
+
+  void _createOrderProceedToPayment(BuildContext context) async {
+  try {
+    final ordersService = OrdersService();
+    final result = await ordersService.createOrder(
+      vehicleId: widget.vehicle.id,
+      rentalStartDate: widget.startDate,
+      rentalEndDate: widget.endDate,
+    );
+    final checkoutUrl = result['checkoutUrl'];
+
+    // ignore: use_build_context_synchronously
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WebviewScreen(
+          url: checkoutUrl,
+          navigationDelegate: orderPaymentRedirect(context: context),
+          title: "Order payment",
+        ),
+      ),
+    );
+  } catch (error) {
+    logger(error);
+
+    if (error is DioError) {
+      // Check if the error is specifically about the order limit
+      if (error.response?.data?.contains("You can have only 2 active or pending orders at max") == true) {
+        // ignore: use_build_context_synchronously
+        _showOrderLimitDialog(context);
+      } else if (error.response?.statusCode == 404) {
+        // Handle 404 error
+        // Show an appropriate message to the user
+      } else {
+        // Handle other types of DioErrors
+      }
+    } else {
+      // Handle non-DioErrors
     }
   }
+}
+
 
   void _showCustomDialog(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
