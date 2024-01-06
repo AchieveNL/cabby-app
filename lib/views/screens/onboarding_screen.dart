@@ -79,8 +79,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
             width: size.width * 0.9,
             height: 50,
             btnText: currentIndex == onboardingPages.length - 1
-                ? 'Get Started'
-                : 'Next',
+                ? 'Begin'
+                : 'Volgende',
             onPressed: currentIndex == onboardingPages.length - 1
                 ? () async {
                     final appProvider =
@@ -101,7 +101,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   height: 50,
                   onPressed: () =>
                       Navigator.of(context).pushReplacementNamed("/login"),
-                  btnText: "Skip",
+                  btnText: "Overslaan",
                 ),
           const SizedBox(
             height: 32,

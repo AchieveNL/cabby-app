@@ -67,7 +67,7 @@ Widget buildDateTimePickerButton({
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Pick-up time'),
+                  const Text('Ophaal tijd'),
                   const SizedBox(height: 5),
                   Text(
                     pickUpDate,
@@ -84,7 +84,7 @@ Widget buildDateTimePickerButton({
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Drop-off time'),
+                  const Text('Drop-off tijd'),
                   const SizedBox(height: 5),
                   Text(
                     dropOffDate,
@@ -143,7 +143,7 @@ Widget buildDateTimePickerContent({
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Pick-up time'),
+                  const Text('Ophaal tijd'),
                   const SizedBox(height: 5),
                   Text(
                     pickUpDate,
@@ -163,7 +163,7 @@ Widget buildDateTimePickerContent({
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Drop-off time'),
+                  const Text('Drop-off tijd'),
                   const SizedBox(height: 5),
                   Text(
                     dropOffDate,

@@ -52,7 +52,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
           // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('An error occurred. Please try again.'),
+              content: Text('Er is een fout opgetreden.Probeer het opnieuw.'),
             ),
           );
         }
@@ -68,13 +68,14 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
         } else {
           // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(response['message'] ?? 'An error occurred.'),
+            content: Text(response['message'] ?? 'Er is een fout opgetreden.'),
           ));
         }
       } catch (error) {
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('An error occurred. Please try again.')),
+          const SnackBar(
+              content: Text('Er is een fout opgetreden.Probeer het opnieuw.')),
         );
       }
     }
@@ -99,13 +100,13 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                 color: Colors.green, size: 64),
             const SizedBox(height: 16),
             const Center(
-              child: Text('Yeah',
+              child: Text('Ja',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 8),
             const Center(
               child: Text(
-                'Your password has been successfully changed',
+                'Uw wachtwoord is succesvol gewijzigd',
                 textAlign: TextAlign.center,
               ),
             ),
@@ -113,7 +114,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
             PrimaryButton(
               width: screenSize.width * 0.7, // Adjust width as needed
               height: 50,
-              btnText: 'Go to Login',
+              btnText: 'Ga naar login',
               onPressed: () {
                 Navigator.of(context).pushReplacementNamed("/login");
               },
@@ -156,7 +157,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Create New Password',
+                'Maak een nieuw wachtwoord',
                 style: TextStyle(
                     color: AppColors.whiteColor,
                     fontSize: 22,
@@ -164,7 +165,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
               ),
               SizedBox(height: 10),
               Text(
-                'Enter your new password and confirm it.',
+                'Voer uw nieuwe wachtwoord in en bevestig het.',
                 style: TextStyle(color: AppColors.whiteColor, fontSize: 16),
               ),
             ],
@@ -191,7 +192,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                   children: [
                     _buildInputField(
                       screenSize,
-                      'New Password',
+                      'nieuw paswoord',
                       passwordController,
                       _validatePassword,
                       true,
@@ -201,7 +202,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                     SizedBox(height: screenSize.height * 0.02),
                     _buildInputField(
                       screenSize,
-                      'Confirm Password',
+                      'bevestig wachtwoord',
                       confirmPasswordController,
                       (val) => _validateConfirmPassword(
                           val, passwordController.text),
@@ -215,14 +216,14 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                       width: screenSize.width * 0.9,
                       height: 50,
                       isLoading: isLoading,
-                      btnText: 'Change password',
+                      btnText: 'Verander wachtwoord',
                       onPressed: onSubmit,
                     ),
                     SizedBox(height: screenSize.height * 0.02),
                     SecondaryButton(
                       width: screenSize.width * 0.9,
                       height: 50,
-                      btnText: 'Cancel',
+                      btnText: 'Annuleren',
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -253,7 +254,9 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
               : TextInputType.emailAddress,
           validator: validator as String? Function(String?),
           obscureText: isPassword &&
-              (label == 'New Password' ? !showPassword : !showConfirmPassword),
+              (label == 'nieuw paswoord'
+                  ? !showPassword
+                  : !showConfirmPassword),
           style: const TextStyle(color: AppColors.blackColor, fontSize: 16),
           decoration: isPassword
               ? _buildPasswordDecoration(label)
@@ -269,14 +272,14 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
         suffixIcon: IconButton(
           onPressed: () {
             setState(() {
-              label == 'New Password'
+              label == 'nieuw paswoord'
                   ? showPassword = !showPassword
                   : showConfirmPassword = !showConfirmPassword;
             });
           },
           icon: Icon(
-            label == 'New Password' && showPassword ||
-                    label == 'Confirm Password' && showConfirmPassword
+            label == 'nieuw paswoord' && showPassword ||
+                    label == 'bevestig wachtwoord' && showConfirmPassword
                 ? Icons.visibility
                 : Icons.visibility_off,
             color: AppColors.blackColor,
@@ -287,10 +290,10 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
   Widget _buildPasswordCriteria() {
     return Column(
       children: [
-        _passwordCriteriaRow(characterLength, 'Minimum length of 8 characters'),
+        _passwordCriteriaRow(characterLength, 'Minimale lengte van 8 tekens'),
         _passwordCriteriaRow(containsUpperAndLowerCase,
-            'Consists of uppercase and lowercase letters'),
-        _passwordCriteriaRow(containsNumber, 'Consists of numbers'),
+            'Bestaat uit hoofdletters en kleine letters'),
+        _passwordCriteriaRow(containsNumber, 'Bestaat uit cijfers'),
       ],
     );
   }
@@ -326,18 +329,18 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
 
   String? _validatePassword(String? value) {
     if (value!.length < 8) {
-      return 'Minimum length must be 8 characters';
+      return 'Minimale lengte moet 8 tekens zijn';
     }
     RegExp passValid = RegExp(r"(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)");
     if (!passValid.hasMatch(value)) {
-      return "Password should contain Capital letter, Small letter, Number & Special character";
+      return "Wachtwoord moet hoofdletter, kleine letter, nummer en speciaal teken bevatten";
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value, String password) {
     if (value != password) {
-      return 'Confirm Password must be same as Password';
+      return 'Bevestig het wachtwoord moet hetzelfde zijn als wachtwoord';
     }
     return null;
   }

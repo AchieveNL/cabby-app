@@ -30,7 +30,9 @@ class _WelcomeMessageWidgetState extends State<WelcomeMessageWidget> {
     if (!widget.isUserBlocked) {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const LoginScreen(),),
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
         (Route<dynamic> route) => false,
       );
     } else {
@@ -81,9 +83,12 @@ class _WelcomeMessageWidgetState extends State<WelcomeMessageWidget> {
       children: [
         SvgPicture.asset('assets/account-verified.svg'),
         const SizedBox(height: 20),
-        _buildTitleText('Your data is being verified'),
+        _buildTitleText('Uw gegevens worden geverifieerd'),
         const SizedBox(height: 15),
-        _buildSubText(widget.msg, AppColors.notSelectedGreyColor,),
+        _buildSubText(
+          widget.msg,
+          AppColors.notSelectedGreyColor,
+        ),
         const Spacer(),
         _buildSignOutButton(),
         const SizedBox(height: 30)
@@ -96,10 +101,10 @@ class _WelcomeMessageWidgetState extends State<WelcomeMessageWidget> {
       children: [
         SvgPicture.asset('assets/succes.svg'),
         const SizedBox(height: 20),
-        _buildTitleText('Yeah!'),
+        _buildTitleText('Ja!'),
         const SizedBox(height: 15),
         _buildSubText(
-            'Your account has been successfully added', const Color(0xFF4D545C)),
+            'Uw account is succesvol aangemaakt', const Color(0xFF4D545C)),
       ],
     );
   }
@@ -117,7 +122,7 @@ class _WelcomeMessageWidgetState extends State<WelcomeMessageWidget> {
           fixedSize: const Size.fromHeight(50),
         ),
         child: const Text(
-          'Sign Out',
+          'Afmelden',
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 16,

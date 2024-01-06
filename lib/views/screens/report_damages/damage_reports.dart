@@ -58,12 +58,12 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
         imageFiles,
       );
       // ignore: use_build_context_synchronously
-      ToastUtil.showToast(context, 'Damage report sent successfully');
+      ToastUtil.showToast(context, 'Schaderapport met succes verzonden');
       // ignore: use_build_context_synchronously
       Navigator.of(context).pop();
     } catch (e) {
       // ignore: use_build_context_synchronously
-      ToastUtil.showToast(context, 'Failed to send damage report');
+      ToastUtil.showToast(context, 'Kan schaderapport niet verzenden');
     } finally {
       setState(() {
         _isSubmitting = false;
@@ -76,7 +76,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Damage Report'),
+        title: const Text('Schaderapport'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -92,7 +92,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                 maxLines: 4,
                 keyboardType: TextInputType.multiline,
                 decoration: DecorationInputs.textBoxInputDecoration(
-                  label: 'Tell us what did you find.',
+                  label: 'Vertel ons wat je hebt gevonden.',
                 ),
               ),
               const SizedBox(height: 20),
@@ -145,7 +145,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                         width: 50,
                         height: 50,
                       ),
-                      text: "Take a picture",
+                      text: "Een foto nemen",
                       onTap: () => _pickImage(ImageSource.camera),
                     ),
                   ),
@@ -158,7 +158,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                         width: 50,
                         height: 50,
                       ),
-                      text: "Choose from gallery",
+                      text: "Kies uit gallerij",
                       onTap: () => _pickImage(ImageSource.gallery),
                     ),
                   ),
@@ -182,7 +182,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
         child: Column(
           children: [
             PrimaryButton(
-              btnText: "Submit Damage Report",
+              btnText: "Schaderapport indienen",
               onPressed: _submitDamageReport,
               width: screenSize.width,
               isDisabled: _isSubmitting,
@@ -190,7 +190,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
             ),
             const SizedBox(height: 10),
             SecondaryButton(
-              btnText: "Cancel",
+              btnText: "Annuleren",
               onPressed: () {
                 Navigator.of(context).pop();
               },

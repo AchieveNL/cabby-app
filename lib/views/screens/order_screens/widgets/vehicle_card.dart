@@ -51,7 +51,7 @@ buildVehicleCard({required Vehicle vehicle}) {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    '${euroFormat.format(vehicle.pricePerDay ?? 0)} /day',
+                    '${euroFormat.format(vehicle.pricePerDay ?? 0)} /dag',
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,

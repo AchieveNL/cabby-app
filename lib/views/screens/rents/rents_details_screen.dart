@@ -52,7 +52,7 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
         } else if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
         } else if (!snapshot.hasData) {
-          return const Text("No data available");
+          return const Text("Geen gegevens beschikbaar");
         } else {
           OrderDetails orderDetails = snapshot.data!;
           bool canCancel = canCancelOrder(orderDetails.order.rentalStartDate);
@@ -120,7 +120,7 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
                         height: 30,
                       ),
                       DangerButton(
-                        btnText: "Cancel order",
+                        btnText: "Annuleer bestelling",
                         onPressed: () async {
                           if (canCancel) {
                             bool success = await OrdersService()
@@ -169,13 +169,13 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
             ),
             const SizedBox(height: 16),
             const Center(
-              child: Text('Yeah',
+              child: Text('Ja',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 8),
             const Center(
               child: Text(
-                'Your request to cancel has been submitted. The refund can take up to 2-5 workdays. After the refund has been completed, we will let you know.',
+                'Uw verzoek om te annuleren is ingediend.De terugbetaling kan maximaal 2-5 werkdagen duren.Nadat de terugbetaling is voltooid, zullen we het u laten weten.',
                 textAlign: TextAlign.center,
               ),
             ),
@@ -183,7 +183,7 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
             PrimaryButton(
               width: screenSize.width * 0.7, // Adjust width as needed
               height: 50,
-              btnText: 'Go to home',
+              btnText: 'Ga naar huis',
               onPressed: () {
                 Navigator.of(context).pushReplacementNamed("/home");
               },
@@ -209,7 +209,7 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                "Order Details",
+                "Bestel Details",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -223,7 +223,7 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
                     MaterialPageRoute(
                       builder: (context) {
                         return const PDFViewerScreen(
-                          title: "Invoice",
+                          title: "Factuur",
                           url: "",
                         );
                       },
@@ -234,7 +234,7 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Invoice',
+                      'Factuur',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -269,7 +269,7 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Total price",
+                    "Totale prijs",
                     style: TextStyle(
                       fontSize: 16,
                     ),
@@ -300,37 +300,37 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
         children: [
           if (vehicle.category != null)
             _detailContainer(
-              'Type',
+              'type',
               Icons.directions_car,
               vehicle.category!,
             ),
           _detailContainer(
-            'Year',
+            'Jaar',
             Icons.date_range,
             vehicle.manufactureYear,
           ),
           _detailContainer(
-            'Duration',
+            'Duur',
             Icons.hourglass_empty,
             vehicle.rentalDuration,
           ),
           _detailContainer(
-            'Engine',
+            'Motor',
             Icons.electric_moped,
             vehicle.engineType,
           ),
           _detailContainer(
-            'Seats',
+            'Stoelen',
             Icons.event_seat,
             vehicle.seatingCapacity,
           ),
           _detailContainer(
-            'Battery',
+            'Accu',
             Icons.battery_full,
             vehicle.batteryCapacity,
           ),
           _detailContainer(
-            'Feature',
+            'Functie',
             Icons.star,
             vehicle.uniqueFeature,
           ),
@@ -408,16 +408,20 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
     logger(orderMessage);
     Color? badgeColor;
     Color? textColor;
+    String dutchOrderMessage = orderMessage;
 
     if (orderMessage.contains("Prepare!")) {
       badgeColor = const Color.fromARGB(255, 212, 230, 241);
       textColor = const Color.fromARGB(255, 52, 152, 219);
+      dutchOrderMessage = "Voorbereiden!";
     } else if (orderMessage.contains("ready to use")) {
       badgeColor = const Color.fromARGB(255, 220, 255, 214);
       textColor = const Color.fromARGB(255, 91, 188, 75);
+      dutchOrderMessage = "Klaar voor gebruik";
     } else if (orderMessage.contains("Thank you for renting with us")) {
       badgeColor = const Color.fromARGB(255, 255, 212, 212);
       textColor = const Color.fromARGB(255, 217, 32, 55);
+      dutchOrderMessage = "Bedankt voor het huren bij ons";
     } else {
       badgeColor = Colors.grey[300];
       textColor = Colors.grey[600];
@@ -430,7 +434,7 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
         color: badgeColor,
       ),
       child: Text(
-        orderMessage,
+        dutchOrderMessage,
         style: TextStyle(
           color: textColor,
           fontWeight: FontWeight.w600,
@@ -513,7 +517,7 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
           !isRentalPeriodActive &&
           !orderDetails.isVehicleUnlocked) {
         return createActionButton(
-          "Unlock",
+          "Ontgrendelen",
           () {
             OrdersService().unlockVehicleOrder(orderDetails.order.id);
             orderDetailsFuture =
@@ -527,7 +531,7 @@ class _RentsDetailsScreenState extends State<RentsDetailsScreen> {
       }
       if (status == "confirmed" && orderDetails.isVehicleUnlocked) {
         return createActionButton(
-          "Report Damages",
+          "Meld schade",
           () => Navigator.push(
             context,
             MaterialPageRoute(

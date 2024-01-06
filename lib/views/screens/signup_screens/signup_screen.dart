@@ -76,14 +76,14 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   final List<String> stepTitles = [
-    "Login access",
-    "Profile",
-    "Driver's License",
-    "Taxi permission",
+    "Inloggegevens",
+    "Profiel",
+    "Rijbewijs",
+    "Taxi -toestemming",
     "KVK",
     "Kiwa taxi vergunning",
-    "Rent policy",
-    "Pay deposit",
+    "Huurovereenkomst",
+    "Aanbetaling",
   ];
 
   List<Widget> get stepWidgets => [
@@ -146,7 +146,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Register',
+                      'Registreren',
                       style: TextStyle(
                         color: AppColors.whiteColor,
                         fontSize: 22,
@@ -155,7 +155,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     SizedBox(height: screenSize.height * 0.02),
                     const Text(
-                      'Enter your account credentials to sign up',
+                      'Voer uw accountgegevens in om aan te melden',
                       style: TextStyle(
                         color: AppColors.whiteColor,
                         fontSize: 16,
@@ -282,9 +282,9 @@ class _SignupScreenState extends State<SignupScreen> {
   void onNext() async {
     if (_shouldNavigateToSignatureScreen()) {
       _navigateToSignatureScreen();
-    } else if (nextBtnTitle == "Create account") {
+    } else if (nextBtnTitle == "Account aanmaken") {
       await _handleCreateAccount();
-    } else if (nextBtnTitle == "Pay now") {
+    } else if (nextBtnTitle == "Nu betalen") {
       _initiatePayment();
     } else if (_shouldIncrementStep()) {
       _incrementStep();
@@ -292,8 +292,8 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   bool _shouldNavigateToSignatureScreen() {
-    return stepTitles[_currentStep] == "Rent policy" &&
-        nextBtnTitle != "Create account";
+    return stepTitles[_currentStep] == "Huurbeleid" &&
+        nextBtnTitle != "Account aanmaken";
   }
 
   void _navigateToSignatureScreen() {
@@ -319,7 +319,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
     try {
       // ignore: use_build_context_synchronously
-      ToastUtil.showToast(context, "Creating your account...");
+      ToastUtil.showToast(context, "Je account maken...");
       logger("Creating user...");
       await _createUser(data: emailPasswordData);
       logger("User created successfully!");
@@ -357,7 +357,7 @@ class _SignupScreenState extends State<SignupScreen> {
         await authService.initializeUser(user);
       }
       // ignore: use_build_context_synchronously
-      ToastUtil.showToast(context, "Your account has been created.");
+      ToastUtil.showToast(context, "Je account is aangemaakt.");
       _incrementStep();
       logger("Verifying user info...");
       await verifyUserInfo();
@@ -387,7 +387,7 @@ class _SignupScreenState extends State<SignupScreen> {
           builder: (context) => WebviewScreen(
             url: url,
             navigationDelegate: depositPaymentRedirect(context),
-            title: "Pay deposit",
+            title: "Aanbetaling",
           ),
         ),
       );

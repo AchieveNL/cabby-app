@@ -85,7 +85,7 @@ class _CameraScreenState extends State<CameraScreen> {
           ),
           const SizedBox(height: 16.0),
           Text(
-            "Place your ${widget.name} in the frame & make sure your room is brightly lit",
+            "Plaats je document in het kader en zorg dat het voldoende belicht is.",
             style: const TextStyle(color: Colors.white, fontSize: 16.0),
             textAlign: TextAlign.center,
           ),
@@ -102,7 +102,7 @@ class _CameraScreenState extends State<CameraScreen> {
         child: PrimaryButton(
           width: MediaQuery.of(context).size.width * 0.9,
           height: 50,
-          btnText: "Take a Picture",
+          btnText: "Maak een foto",
           onPressed: () async {
             try {
               await _initializeControllerFuture;

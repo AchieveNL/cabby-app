@@ -9,7 +9,7 @@ class TermsAndConditions extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Terms and Conditions',
+          'Voorwaarden',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -26,10 +26,10 @@ class TermsAndConditions extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildTerm(
-                  "1. Reservation: All reservations are subject to availability. We reserve the right to cancel a reservation at any time and for any reason."),
+                  "1. Reservering: alle reserveringen zijn onderhevig aan beschikbaarheid.We behouden ons het recht voor om een reservering op elk gewenst moment en om welke reden dan ook te annuleren."),
               const SizedBox(height: 10),
               _buildTerm(
-                  "2. Driver's License and Age Requirements: The renter must be at least 21 years old and possess a valid driver's license. The driver's license must be presented at the time of pickup."),
+                  "2. Rijbewijs en leeftijdsvereisten: de huurder moet minimaal 21 jaar oud zijn en een geldig rijbewijs bezitten.Het rijbewijs moet worden gepresenteerd op het moment van ophalen."),
             ],
           ),
         ),

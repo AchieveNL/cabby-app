@@ -36,7 +36,7 @@ class _RentalPolicyState extends State<RentalPolicy> {
   void didUpdateWidget(RentalPolicy oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.signatureData.signature != widget.signatureData.signature) {
-      widget.btnCallback(title: "Create account", isDisabled: true);
+      widget.btnCallback(title: "Account aanmaken", isDisabled: true);
       _downloadPdf();
     }
   }
@@ -58,9 +58,9 @@ class _RentalPolicyState extends State<RentalPolicy> {
     });
 
     if (widget.signatureData.signature == null) {
-      widget.btnCallback(title: "Create a signature", isDisabled: false);
+      widget.btnCallback(title: "Maak een handtekening", isDisabled: false);
     } else {
-      widget.btnCallback(title: "Create account", isDisabled: false);
+      widget.btnCallback(title: "Account aanmaken", isDisabled: false);
     }
   }
 
@@ -99,7 +99,7 @@ class _RentalPolicyState extends State<RentalPolicy> {
     return Form(
       child: Column(
         children: [
-          _buildHeaderRow("Rental policy & agreement"),
+          _buildHeaderRow("Huurovereenkomst"),
           const SizedBox(height: 20.0),
           ...?pdfImages?.map(
             (image) => Image.memory(

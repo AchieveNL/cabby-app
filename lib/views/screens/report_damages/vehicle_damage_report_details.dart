@@ -22,7 +22,7 @@ class _VehicleDamageReportDetailsState
     return Scaffold(
       appBar: buildAppBarWithBack(
         context: context,
-        title: 'Damage Report Details',
+        title: 'Details van de schaderapport',
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -60,7 +60,7 @@ class _VehicleDamageReportDetailsState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Reported At:',
+            'Gemeld op:',
             style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -111,7 +111,7 @@ class _VehicleDamageReportDetailsState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Damage Description',
+            'Schadebeschrijving',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -191,9 +191,9 @@ class _VehicleDamageReportDetailsState
               1: FlexColumnWidth(2),
             },
             children: [
-              _buildTableRow('Repair Status', _buildStatusBadge(report.status)),
+              _buildTableRow('Herstelstatus', _buildStatusBadge(report.status)),
               _buildTableRow(
-                'Repaired At',
+                'Gerepareerd op',
                 Text(
                   report.repairedAt != null
                       ? DateFormat('MMMM d, y')
@@ -204,7 +204,7 @@ class _VehicleDamageReportDetailsState
                 ),
               ),
               _buildTableRow(
-                'Repair Cost',
+                'reparatiekosten',
                 Text(
                   report.amount != null
                       ? euroFormat.format(report.amount)

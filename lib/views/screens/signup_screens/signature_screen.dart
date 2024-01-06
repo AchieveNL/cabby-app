@@ -33,7 +33,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
 
-  String _selectedTab = 'Draw';
+  String _selectedTab = 'Tekenen';
   bool _isUseBtnDisabled = true;
 
   @override
@@ -56,7 +56,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
 
   void _onChangeTab(String newTab) {
     logger(newTab);
-    if (newTab == 'Select') {
+    if (newTab == 'Uitkiezen') {
       _selectSignatureFromGallery();
     } else {
       setState(() {
@@ -78,14 +78,14 @@ class _SignatureScreenState extends State<SignatureScreen> {
         if (image.path.split(".").last.toLowerCase() == 'png') {
           setState(() {
             _selectedImage = File(image.path);
-            _selectedTab = 'Select';
+            _selectedTab = 'Uitkiezen';
             _isUseBtnDisabled =
                 false; // User has selected a valid image, so enable the "Use Signature" button
           });
         } else {
           // Inform user that only PNG images are allowed
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Please select a PNG image.")),
+            const SnackBar(content: Text("Selecteer een PNG afbeelding.")),
           );
         }
       }
@@ -100,7 +100,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
   Future<void> _useSignature(double width, double height) async {
     File? signatureFile;
 
-    if (_selectedTab == 'Draw') {
+    if (_selectedTab == 'Tekenen') {
       _toggleLoading();
       final img = await _controller.toPngBytes(
           height: height.toInt(), width: width.toInt());
@@ -165,7 +165,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
       title: const Padding(
         padding: EdgeInsets.only(top: 10),
         child: Text(
-          'Your Signature',
+          'Uw handtekening',
           style: TextStyle(
               fontWeight: FontWeight.w700, fontSize: 16, color: Colors.black),
         ),
@@ -205,31 +205,32 @@ class _SignatureScreenState extends State<SignatureScreen> {
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: () => _onChangeTab('Draw'),
+            onTap: () => _onChangeTab('Tekenen'),
             child: Text(
-              'Draw',
+              'Tekenen',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontWeight:
-                    _selectedTab == 'Draw' ? FontWeight.w700 : FontWeight.w400,
+                fontWeight: _selectedTab == 'Tekenen'
+                    ? FontWeight.w700
+                    : FontWeight.w400,
                 fontSize: 16,
-                color: _selectedTab == 'Draw' ? Colors.black : Colors.grey,
+                color: _selectedTab == 'Tekenen' ? Colors.black : Colors.grey,
               ),
             ),
           ),
         ),
         Expanded(
           child: GestureDetector(
-            onTap: () => _onChangeTab('Select'),
+            onTap: () => _onChangeTab('Uitkiezen'),
             child: Text(
-              'Select',
+              'Uitkiezen',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontWeight: _selectedTab == 'Select'
+                fontWeight: _selectedTab == 'Uitkiezen'
                     ? FontWeight.w700
                     : FontWeight.w400,
                 fontSize: 16,
-                color: _selectedTab == 'Select' ? Colors.black : Colors.grey,
+                color: _selectedTab == 'Uitkiezen' ? Colors.black : Colors.grey,
               ),
             ),
           ),
@@ -239,7 +240,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
   }
 
   Widget _buildSignatureContainer(Size size) {
-    return _selectedTab == 'Draw'
+    return _selectedTab == 'Tekenen'
         ? Container(
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -265,13 +266,13 @@ class _SignatureScreenState extends State<SignatureScreen> {
                     crossAxisCount: 3,
                     children: [Image.file(_selectedImage!)],
                   )
-                : const Center(child: Text('No image selected')),
+                : const Center(child: Text('Geen afbeelding geselecteerd')),
           );
   }
 
   Text _buildInstructionText() {
     return const Text(
-      'Draw your signature inside the area or select from gallery',
+      'Teken uw handtekening in het gebied of kies uit de galerij',
       style: TextStyle(
         fontWeight: FontWeight.w400,
         fontSize: 14,
@@ -282,7 +283,7 @@ class _SignatureScreenState extends State<SignatureScreen> {
 
   Widget _buildLoadingOrUseButton(Size size) {
     return PrimaryButton(
-      btnText: 'Use Signature',
+      btnText: 'Gebruik handtekening',
       width: size.width * .7,
       height: 48,
       isLoading: _loading,
@@ -293,11 +294,11 @@ class _SignatureScreenState extends State<SignatureScreen> {
 
   Widget _buildDeleteButton(Size size) {
     return SecondaryButton(
-      btnText: 'Delete Signature',
+      btnText: 'Handtekening verwijderen',
       width: size.width * .7,
       height: 48,
       onPressed: () {
-        if (_selectedTab == 'Draw') {
+        if (_selectedTab == 'Tekenen') {
           _controller.clear();
         } else {
           _selectedImage = null;

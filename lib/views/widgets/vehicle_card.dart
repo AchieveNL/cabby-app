@@ -99,7 +99,7 @@ class VehicleCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            'Battery: ${vehicle.batteryCapacity}',
+                            'Accu: ${vehicle.batteryCapacity}',
                             style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
@@ -112,7 +112,7 @@ class VehicleCard extends StatelessWidget {
                   ),
                   Flexible(
                     child: Text(
-                      '${currencyFormat.format(vehicle.pricePerDay ?? 0)} /day',
+                      '${currencyFormat.format(vehicle.pricePerDay ?? 0)} /dag',
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,

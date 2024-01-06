@@ -92,7 +92,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Reset Password',
+                'Reset wachtwoord',
                 style: TextStyle(
                     color: AppColors.whiteColor,
                     fontSize: 22,
@@ -100,7 +100,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               ),
               SizedBox(height: 10),
               Text(
-                'Enter your email address to receive password reset instructions.',
+                'Voer uw e -mailadres in om instructies voor het reset van het wachtwoord te ontvangen.',
                 style: TextStyle(color: AppColors.whiteColor, fontSize: 16),
               ),
             ],
@@ -142,8 +142,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           validateEmail, // Assuming you have this function from the previous code
       autovalidateMode: AutovalidateMode.onUserInteraction,
       style: const TextStyle(color: AppColors.blackColor, fontSize: 16),
-      decoration:
-          DecorationInputs.textBoxInputDecoration(label: 'Email Address'),
+      decoration: DecorationInputs.textBoxInputDecoration(label: 'E-mailadres'),
     );
   }
 
@@ -153,7 +152,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         PrimaryButton(
           width: screenSize.width * 0.9,
           height: 50,
-          btnText: 'Send Code',
+          btnText: 'Code verzenden',
           isLoading: isLoading, // Reflect the state of isLoading in the button
           onPressed: onSendResetLink,
         ),
@@ -161,7 +160,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         GestureDetector(
           onTap: () => Navigator.of(context).pop(),
           child: const Text(
-            'Back to Login',
+            'Terug naar Inloggen',
             style: TextStyle(
               fontFamily: "SF Cartoonist Hand",
               fontSize: 14,

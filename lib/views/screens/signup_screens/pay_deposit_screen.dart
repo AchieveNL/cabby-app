@@ -31,7 +31,7 @@ class _PayDepositScreenState extends State<PayDepositScreen> {
           builder: (context) => WebviewScreen(
             url: url,
             navigationDelegate: depositPaymentRedirect(context),
-            title: "Pay deposit",
+            title: "Aanbetaling",
           ),
         ),
       );
@@ -64,7 +64,7 @@ class _PayDepositScreenState extends State<PayDepositScreen> {
                     ),
                     SizedBox(height: screenSize.height * 0.02),
                     const Text(
-                      "Pay deposit",
+                      "Aanbetaling",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -76,7 +76,7 @@ class _PayDepositScreenState extends State<PayDepositScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Text(
-                        "Ready to reserve your rental car? Don't forget that a deposit will be required at pickup to secure your rental. This deposit ensures that the rental company can cover any damages or additional fees incurred during your rental period",
+                        "Klaar om uw huurauto te reserveren?Vergeet niet dat een aanbetaling vereist is bij het ophalen om uw huur te beveiligen.Deze aanbetaling zorgt ervoor dat het huurbedrijf eventuele schade of extra vergoedingen kan dekken tijdens uw huurperiode",
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey[600],
@@ -95,7 +95,7 @@ class _PayDepositScreenState extends State<PayDepositScreen> {
               onPressed: () {
                 _initiatePayment();
               },
-              btnText: "Pay Deposit",
+              btnText: "Aanbetaling",
             ),
             const SizedBox(height: 24),
           ],

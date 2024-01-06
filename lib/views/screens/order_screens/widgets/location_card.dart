@@ -14,7 +14,7 @@ class LocationCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Location',
+          'Plaats',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -42,7 +42,7 @@ class LocationCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Cabby Dealer',
+                    'Cabby dealer',
                     style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(height: 5),
@@ -60,7 +60,7 @@ class LocationCard extends StatelessWidget {
               GestureDetector(
                 onTap: _openMap,
                 child: const Text(
-                  'See on the map',
+                  'Zie op de kaart',
                   style: TextStyle(
                     fontSize: 18,
                     color: AppColors.primaryColor,

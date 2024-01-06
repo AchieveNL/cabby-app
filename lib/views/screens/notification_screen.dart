@@ -13,7 +13,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return Scaffold(
       appBar: _buildAppBar(context),
       body: const Center(
-        child: Text('No notification yet!'),
+        child: Text('Nog geen melding!'),
       ),
     );
   }
@@ -36,7 +36,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       title: const Padding(
         padding: EdgeInsets.only(top: 10),
         child: Text(
-          'Notification',
+          'Kennisgeving',
           style: TextStyle(
               fontWeight: FontWeight.w700, fontSize: 16, color: Colors.black),
         ),

@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Login',
+                'Inloggen',
                 style: TextStyle(
                     color: AppColors.whiteColor,
                     fontSize: 22,
@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               SizedBox(height: 10),
               Text(
-                'Enter your account credentials to sign in to your cabby account',
+                'Voer uw accountgegevens in om u aan te melden bij uw Cabby -account',
                 style: TextStyle(color: AppColors.whiteColor, fontSize: 16),
               ),
             ],
@@ -104,11 +104,11 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _getLabel('Email Address'),
+        _getLabel('E-mailadres'),
         SizedBox(height: screenSize.height * 0.02),
         _buildEmailField(),
         SizedBox(height: screenSize.height * 0.030),
-        _getLabel('Password'),
+        _getLabel('Wachtwoord'),
         SizedBox(height: screenSize.height * 0.02),
         _buildPasswordField(),
         SizedBox(height: screenSize.height * 0.03),
@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ));
               },
               child: const Text(
-                'Forgot Password?',
+                'Wachtwoord vergeten?',
                 style: TextStyle(
                   fontFamily: "SF Cartoonist Hand",
                   fontSize: 14,
@@ -145,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
         PrimaryButton(
           width: screenSize.width * 0.9,
           height: 50,
-          btnText: 'Login',
+          btnText: 'Inloggen',
           isLoading: isLoading,
           onPressed: onSubmit,
         ),
@@ -155,10 +155,10 @@ class _LoginScreenState extends State<LoginScreen> {
           child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Don\'t have an account?'),
+              Text('Heb je geen account?'),
               SizedBox(width: 10),
               Text(
-                'Sign up now',
+                'Meld u nu aan',
                 style: TextStyle(
                   fontFamily: "SF Cartoonist Hand",
                   fontSize: 14,
@@ -180,8 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
       validator: validateEmail,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       style: const TextStyle(color: AppColors.blackColor, fontSize: 16),
-      decoration:
-          DecorationInputs.textBoxInputDecoration(label: 'Email Address'),
+      decoration: DecorationInputs.textBoxInputDecoration(label: 'E-mailadres'),
     );
   }
 
@@ -193,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       style: const TextStyle(color: AppColors.blackColor, fontSize: 16),
       decoration: DecorationInputs.textBoxInputDecorationWithSuffixIcon(
-          label: 'Password',
+          label: 'Wachtwoord',
           suffixIcon: IconButton(
             onPressed: _toggleShowPassword,
             icon: showPassword

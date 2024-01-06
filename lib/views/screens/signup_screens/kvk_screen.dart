@@ -11,14 +11,12 @@ class KvkScreen extends StatefulWidget {
   final Function(SignupKvk) dataCallback;
   final Function({required String title, required bool isDisabled}) btnCallback;
   final SignupKvk kvkData;
-  const KvkScreen(
-      {
+  const KvkScreen({
     Key? key,
     required this.dataCallback,
     required this.btnCallback,
     required this.kvkData,
-  })
-      : super(key: key);
+  }) : super(key: key);
 
   @override
   State<KvkScreen> createState() => _KvkScreenState();
@@ -51,7 +49,7 @@ class _KvkScreenState extends State<KvkScreen> {
         widget.dataCallback(data);
 
         // If the file is not null, update the button to enable and set its title
-        widget.btnCallback(title: "Next", isDisabled: false);
+        widget.btnCallback(title: "Volgende", isDisabled: false);
       });
     }
   }
@@ -121,7 +119,7 @@ class _KvkScreenState extends State<KvkScreen> {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: SecondaryButtonWithIcon(
-        btnText: 'Upload File',
+        btnText: 'Upload bestand',
         btnIcon: SvgPicture.asset(
           'assets/document-text.svg',
           color: AppColors.primaryColor,

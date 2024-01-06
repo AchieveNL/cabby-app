@@ -46,7 +46,8 @@ class _KiwaScreenState extends State<KiwaScreen> {
 
       if (fileSizeInMB > maxFileSizeInMB) {
         setState(() {
-          fileSizeError = "File size exceeds ${maxFileSizeInMB}MB limit.";
+          fileSizeError =
+              "Bestandsgrootte overschrijdt ${maxFileSizeInMB}MB begrenzing.";
           kawiFile = null;
         });
       } else {
@@ -57,7 +58,7 @@ class _KiwaScreenState extends State<KiwaScreen> {
         // Updating SignupData
         widget.dataCallback(SignupKawi()..kawiFile = kawiFile);
         // Enabling the Next button after a successful file upload.
-        widget.btnCallback(title: "Next", isDisabled: false);
+        widget.btnCallback(title: "Volgende", isDisabled: false);
       }
     }
   }
@@ -129,7 +130,7 @@ class _KiwaScreenState extends State<KiwaScreen> {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: SecondaryButtonWithIcon(
-        btnText: 'Upload File',
+        btnText: 'Upload bestand',
         btnIcon: SvgPicture.asset(
           'assets/svg/document-text.svg',
           color: AppColors.primaryColor,

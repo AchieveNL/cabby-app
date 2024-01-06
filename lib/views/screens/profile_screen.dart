@@ -25,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (context, userProvider, child) {
           final user = userProvider.userProfile;
           return user == null
-              ? const Center(child: Text('User profile not available!'))
+              ? const Center(child: Text('Gebruikersprofiel niet beschikbaar!'))
               : Container(
                   decoration: DecorationBoxes.decorationBackground(),
                   child: Column(
@@ -61,7 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   );
                                 },
-                                btnText: 'Change Password',
+                                btnText: 'Verander wachtwoord',
                               ),
                               SizedBox(height: screenSize.height * 0.04),
                               PrimaryButton(
@@ -73,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 onPressed: () {
                                   AuthService(context).signOut();
                                 },
-                                btnText: 'Logout',
+                                btnText: 'Uitloggen',
                               ),
                               SizedBox(height: screenSize.height * 0.04),
                               DangerButton(
@@ -86,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 onPressed: () {
                                   _showDeleteAccountDialog();
                                 },
-                                btnText: 'Deactivate Account',
+                                btnText: 'account deactiveren',
                               ),
                               const Spacer(),
                               const Text(
@@ -99,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               SizedBox(height: screenSize.height * 0.02),
                               Text(
-                                'Version 1.0.0',
+                                'Versie 1.0.0',
                                 style: TextStyle(
                                   color: Colors.grey.shade400,
                                   fontSize: 14,
@@ -129,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hi $name',
+                'Hoi $name',
                 style: const TextStyle(
                   color: AppColors.whiteColor,
                   fontSize: 22,
@@ -150,19 +150,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirm Deactivation'),
+          title: const Text('Bevestig deactivering'),
           content: const Text(
-              'Are you sure you want to deactivate your account? This action cannot be undone.'),
+              'Weet u zeker dat u uw account wilt deactiveren?Deze actie kan niet ongedaan gemaakt worden.'),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel',
+              child: const Text('Annuleren',
                   style: TextStyle(color: AppColors.primaryColor)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Delete',
+              child: const Text('Verwijderen',
                   style: TextStyle(color: AppColors.redColor)),
               onPressed: () {
                 // Call the function to delete the account

@@ -63,7 +63,7 @@ class _PaymentRedirectScreenState extends State<PaymentRedirectScreen> {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  "Yeah!",
+                  "Ja!",
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 24,
@@ -73,7 +73,7 @@ class _PaymentRedirectScreenState extends State<PaymentRedirectScreen> {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  "Your account has been successfully added",
+                  "Uw account is succesvol aangemaakt",
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 16,
@@ -88,7 +88,7 @@ class _PaymentRedirectScreenState extends State<PaymentRedirectScreen> {
             width: screenSize.width * 0.9,
             height: 50,
             isLoading: true,
-            btnText: "Continue",
+            btnText: "Doorgaan",
             onPressed: () {},
           ),
           const SizedBox(height: 20),

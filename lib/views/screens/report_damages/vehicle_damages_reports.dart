@@ -49,7 +49,7 @@ class _VehicleDamageReportsState extends State<VehicleDamageReports> {
     return Scaffold(
       appBar: buildAppBarWithBack(
         context: context,
-        title: 'Damage reports',
+        title: 'Schaderapporten',
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -141,7 +141,7 @@ class _VehicleDamageReportsState extends State<VehicleDamageReports> {
 
   Widget _buildErrorUI() {
     return Center(
-      child: Text(errorMessage ?? 'An unknown error occurred'),
+      child: Text(errorMessage ?? 'Een onbekende fout is opgetreden'),
     );
   }
 
@@ -153,7 +153,7 @@ class _VehicleDamageReportsState extends State<VehicleDamageReports> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "🚗🛠️ No Reports Found! 🛠️🚗",
+              "🚗🛠️ Geen rapporten gevonden! 🛠️🚗",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 18,
@@ -163,7 +163,7 @@ class _VehicleDamageReportsState extends State<VehicleDamageReports> {
             ),
             SizedBox(height: 15),
             Text(
-              "It looks like this vehicle is in great shape! ✨\nThere are no damage reports available at the moment.\n\nKeep an eye here for any future updates. 🌟",
+              "Het lijkt erop dat dit voertuig in uitstekende staat is!✨ \ Er zijn momenteel geen schaderapporten beschikbaar. \ I \ Houd hier in de gaten voor toekomstige updates.🌟",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
@@ -204,7 +204,7 @@ class _VehicleDamageReportsState extends State<VehicleDamageReports> {
           children: [
             const SizedBox(height: 20),
             const Text(
-              'Reported At:',
+              'Gemeld op:',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -242,7 +242,7 @@ class _VehicleDamageReportsState extends State<VehicleDamageReports> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Damage Description",
+                    "Schadebeschrijving",
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -270,7 +270,7 @@ class _VehicleDamageReportsState extends State<VehicleDamageReports> {
                 Navigator.push(context, route);
               },
               width: double.infinity,
-              btnText: 'View damage details',
+              btnText: 'Details bekijken',
             ),
           ],
         ),

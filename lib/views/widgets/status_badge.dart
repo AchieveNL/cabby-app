@@ -9,22 +9,22 @@ Widget buildStatusBadge({required String status}) {
     case "CONFIRMED":
       badgeColor = const Color.fromARGB(255, 220, 255, 214);
       textColor = const Color.fromARGB(255, 91, 188, 75);
-      text = 'Confirmed';
+      text = 'Bevestigd';
       break;
     case "PENDING":
       badgeColor = const Color.fromARGB(255, 255, 247, 153);
       textColor = const Color.fromARGB(255, 228, 171, 16);
-      text = 'Pending';
+      text = 'In behandeling';
       break;
     case "CANCELED":
       badgeColor = const Color.fromARGB(255, 255, 212, 212);
       textColor = const Color.fromARGB(255, 217, 32, 55);
-      text = 'Canceled';
+      text = 'Geannuleerd';
       break;
     case "REJECTED":
       badgeColor = const Color.fromARGB(255, 248, 215, 218);
       textColor = const Color.fromARGB(255, 231, 76, 60);
-      text = 'Rejected';
+      text = 'Afgewezen';
       break;
     case "COMPLETED":
       badgeColor = const Color.fromARGB(255, 212, 230, 241);
@@ -34,12 +34,12 @@ Widget buildStatusBadge({required String status}) {
     case "UNPAID":
       badgeColor = const Color.fromARGB(255, 220, 220, 220);
       textColor = const Color.fromARGB(255, 150, 150, 150);
-      text = 'Require payment';
+      text = 'Vereisen betaling';
       break;
     default:
       badgeColor = const Color.fromARGB(255, 220, 220, 220);
       textColor = const Color.fromARGB(255, 150, 150, 150);
-      text = 'Unknown';
+      text = 'Onbekend';
   }
 
   return Container(

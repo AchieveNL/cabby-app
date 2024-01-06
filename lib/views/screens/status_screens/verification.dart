@@ -37,7 +37,7 @@ class VerificationScreen extends StatelessWidget {
 
             // Title
             const Text(
-              "Your data is being verified",
+              "Uw gegevens worden geverifieerd",
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 24,
@@ -51,7 +51,7 @@ class VerificationScreen extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
-                "Your data is being verified by our admin. We will let you know if your data is accepted or rejected via your email within 24 hours.",
+                "Uw gegevens worden geverifieerd door onze admin. We laten u binnen 24 uur via e-mail weten of uw gegevens zijn geaccepteerd of afgewezen.",
                 textAlign: TextAlign.justify,
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
@@ -66,7 +66,7 @@ class VerificationScreen extends StatelessWidget {
               onPressed: () {
                 AuthService(context).signOut();
               },
-              btnText: "Sign out",
+              btnText: "Afmelden",
             ),
           ],
         ),

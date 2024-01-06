@@ -87,7 +87,7 @@ class _CheckVehicleAvailabilityState extends State<CheckVehicleAvailability> {
                   height: 30,
                 ),
                 buildDateTimePickerButton(
-                  title: 'Please select rental period',
+                  title: 'Selecteer de huurperiode',
                   startDate: _startDate,
                   endDate: _endDate,
                   onTap: _showDateRangePicker,
@@ -147,13 +147,14 @@ class _CheckVehicleAvailabilityState extends State<CheckVehicleAvailability> {
           context: context,
           barrierDismissible: false,
           builder: (context) => const AlertDialog(
-            title: Text('Checking Availability'),
+            title: Text('Beschikbaarheid controleren'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 CircularProgressIndicator(),
                 SizedBox(height: 16),
-                Text('Please wait while we check the availability...'),
+                Text(
+                    'Wacht alsjeblieft terwijl we de beschikbaarheid controleren ...'),
               ],
             ),
           ),
@@ -218,7 +219,7 @@ class _CheckVehicleAvailabilityState extends State<CheckVehicleAvailability> {
                 ),
               ),
               const Text(
-                " / total",
+                " / totaal",
                 style: TextStyle(
                   fontSize: 14,
                   color: AppColors.blackColor,
@@ -228,7 +229,7 @@ class _CheckVehicleAvailabilityState extends State<CheckVehicleAvailability> {
           ),
           PrimaryButton(
             onPressed: _orderVehicle,
-            btnText: "Book Now",
+            btnText: "Boek nu",
             width: size.width * 0.3,
             isDisabled: !_isAvailable,
           ),

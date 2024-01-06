@@ -41,7 +41,7 @@ class _RentsContentState extends State<RentsContent> {
         } else if (snapshot.hasError ||
             !snapshot.hasData ||
             snapshot.data!.isEmpty) {
-          return const Center(child: Text("No orders found."));
+          return const Center(child: Text("Geen bestellingen gevonden."));
         } else {
           List<OrderOverview> orders = snapshot.data!;
           return ListView.builder(
@@ -114,7 +114,7 @@ class _RentsContentState extends State<RentsContent> {
                                         ),
                                         const SizedBox(height: 10),
                                         Text(
-                                          '${euroFormat.format(double.parse(order.totalAmount))} / total',
+                                          '${euroFormat.format(double.parse(order.totalAmount))} / totaal',
                                           style: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
@@ -153,7 +153,7 @@ class _RentsContentState extends State<RentsContent> {
                                               MaterialPageRoute(
                                                 builder: (context) {
                                                   return PDFViewerScreen(
-                                                    title: "Invoice",
+                                                    title: "Factuur",
                                                     url: order
                                                         .payment.invoiceUrl,
                                                   );
@@ -166,7 +166,7 @@ class _RentsContentState extends State<RentsContent> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               const Text(
-                                                'Invoice',
+                                                'Factuur',
                                                 style: TextStyle(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w700,
@@ -189,7 +189,7 @@ class _RentsContentState extends State<RentsContent> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            const Text('Status'),
+                                            const Text('Toestand'),
                                             const SizedBox(height: 5),
                                             buildStatusBadge(
                                               status: order.status,
@@ -204,7 +204,7 @@ class _RentsContentState extends State<RentsContent> {
                             ),
                             const SizedBox(height: 20),
                             SecondaryButton(
-                              btnText: "View Vehicle",
+                              btnText: "Bekijk voertuig",
                               onPressed: () {
                                 Navigator.push(
                                   context,

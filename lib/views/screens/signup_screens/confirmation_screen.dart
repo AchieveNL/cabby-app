@@ -54,7 +54,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  "Your account has been successfully added",
+                  "Uw account is succesvol aangemaakt",
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 16,
@@ -69,7 +69,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
             width: screenSize.width * 0.9,
             height: 50,
             isLoading: isButtonLoading,
-            btnText: "Continue",
+            btnText: "Doorgaan",
             onPressed: () {},
           ),
           const SizedBox(height: 20),

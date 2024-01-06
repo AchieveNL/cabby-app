@@ -110,14 +110,14 @@ class _EmailPasswordState extends State<EmailPassword> {
         children: [
           _buildInputField(
             screenSize,
-            'Email Address',
+            'E-mailadres',
             emailController,
             _validateEmail,
           ),
           SizedBox(height: screenSize.height * 0.02),
           _buildInputField(
             screenSize,
-            'Password',
+            'Wachtwoord',
             passwordController,
             _validatePassword,
             true,
@@ -127,7 +127,7 @@ class _EmailPasswordState extends State<EmailPassword> {
           SizedBox(height: screenSize.height * 0.02),
           _buildInputField(
             screenSize,
-            'Confirm password',
+            'Bevestig wachtwoord',
             confirmPasswordController,
             (val) => _validateConfirmPassword(val, passwordController.text),
             true,
@@ -151,9 +151,9 @@ class _EmailPasswordState extends State<EmailPassword> {
                 confirmPasswordController.text, passwordController.text) ==
             null &&
         !emailExists) {
-      widget.btnCallback(title: "Next", isDisabled: false);
+      widget.btnCallback(title: "Volgende", isDisabled: false);
     } else {
-      widget.btnCallback(title: "Next", isDisabled: true);
+      widget.btnCallback(title: "Volgende", isDisabled: true);
     }
     widget.dataCallback(data);
     _updatePasswordCriteria(passwordController.text);
@@ -167,7 +167,7 @@ class _EmailPasswordState extends State<EmailPassword> {
       children: [
         _getLabel(label),
         SizedBox(height: screenSize.height * 0.02),
-        label == 'Email Address'
+        label == 'E-mailadres'
             ? ValueListenableBuilder<EmailValidationState>(
                 valueListenable: emailValidationNotifier,
                 builder: (context, state, child) {
@@ -186,7 +186,7 @@ class _EmailPasswordState extends State<EmailPassword> {
                     suffixIcon = const Icon(Icons.check, color: Colors.green);
                   } else if (state == EmailValidationState.Exists) {
                     suffixIcon = const Icon(Icons.error, color: Colors.red);
-                    errorMessage = 'Email already exists';
+                    errorMessage = 'E-mail bestaat al';
                   }
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +202,7 @@ class _EmailPasswordState extends State<EmailPassword> {
                           return errorMessage ?? validator(value);
                         },
                         obscureText: isPassword &&
-                            (label == 'Password'
+                            (label == 'Wachtwoord'
                                 ? !showPassword
                                 : !showConfirmPassword),
                         style: const TextStyle(
@@ -224,7 +224,7 @@ class _EmailPasswordState extends State<EmailPassword> {
                     : TextInputType.text,
                 validator: validator as String? Function(String?),
                 obscureText: isPassword &&
-                    (label == 'Password'
+                    (label == 'Wachtwoord'
                         ? !showPassword
                         : !showConfirmPassword),
                 style:
@@ -243,14 +243,14 @@ class _EmailPasswordState extends State<EmailPassword> {
         suffixIcon: IconButton(
           onPressed: () {
             setState(() {
-              label == 'Password'
+              label == 'Wachtwoord'
                   ? showPassword = !showPassword
                   : showConfirmPassword = !showConfirmPassword;
             });
           },
           icon: Icon(
-            label == 'Password' && showPassword ||
-                    label == 'Confirm password' && showConfirmPassword
+            label == 'Wachtwoord' && showPassword ||
+                    label == 'Bevestig wachtwoord' && showConfirmPassword
                 ? Icons.visibility
                 : Icons.visibility_off,
             color: AppColors.blackColor,
@@ -280,10 +280,10 @@ class _EmailPasswordState extends State<EmailPassword> {
   Widget _buildPasswordCriteria() {
     return Column(
       children: [
-        _passwordCriteriaRow(characterLength, 'Minimum length of 8 characters'),
+        _passwordCriteriaRow(characterLength, 'Minimale lengte van 8 tekens'),
         _passwordCriteriaRow(containsUpperAndLowerCase,
-            'Consists of uppercase and lowercase letters'),
-        _passwordCriteriaRow(containsNumber, 'Consists of numbers'),
+            'Bestaat uit hoofdletters en kleine letters'),
+        _passwordCriteriaRow(containsNumber, 'Bestaat uit cijfers'),
       ],
     );
   }
@@ -312,10 +312,10 @@ class _EmailPasswordState extends State<EmailPassword> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Have an account?'),
+            Text('Heeft u al een account?'),
             SizedBox(width: 10),
             Text(
-              'Login',
+              'Inloggen',
               style: TextStyle(
                   fontFamily: "SF Cartoonist Hand",
                   fontSize: 14,
@@ -340,31 +340,31 @@ class _EmailPasswordState extends State<EmailPassword> {
 
   String? _validatePassword(String? value) {
     if (value!.length < 8) {
-      return 'Minimum length must be 8 characters';
+      return 'Minimale lengte moet 8 tekens zijn';
     }
     RegExp passValid = RegExp(r"(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)");
     if (value.length < 8) {
-      return 'Password must be at least 8 characters';
+      return 'Wachtwoord moet minimaal 8 tekens zijn';
     }
     if (!passValid.hasMatch(value)) {
-      return "Password should contain Capital letter, Small letter, Number & Special character";
+      return "Wachtwoord moet hoofdletter, kleine letter, nummer en speciaal teken bevatten";
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value, String password) {
     if (value != password) {
-      return 'Confirm Password must be same as Password';
+      return 'Bevestig het wachtwoord moet hetzelfde zijn als wachtwoord';
     }
     return null;
   }
 
   String? _validateEmail(String? value) {
     if (value!.isEmpty) {
-      return 'Email is required';
+      return 'E-mail is vereist';
     }
     if (!RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
-      return 'Please enter a valid email address';
+      return 'Gelieve een geldig e-mailadres in te geven';
     }
     return null;
   }

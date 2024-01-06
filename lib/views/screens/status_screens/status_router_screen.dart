@@ -68,9 +68,9 @@ class StatusRouterScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content:
-            const Text('An unexpected error occurred. Please try again later.'),
+        title: const Text('Fout'),
+        content: const Text(
+            'Er is een onverwachte fout opgetreden.Probeer het later opnieuw.'),
         actions: [
           TextButton(
             child: const Text('OK'),

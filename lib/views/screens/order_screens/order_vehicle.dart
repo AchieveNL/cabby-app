@@ -38,7 +38,8 @@ class _OrderVehicleState extends State<OrderVehicle> {
     return Scaffold(
       appBar: buildAppBarWithBack(
         context: context,
-        title: 'Reserve ${widget.vehicle.companyName} ${widget.vehicle.model}',
+        title:
+            'Reserveren ${widget.vehicle.companyName} ${widget.vehicle.model}',
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -65,11 +66,11 @@ class _OrderVehicleState extends State<OrderVehicle> {
                 const SizedBox(height: 30),
                 buildDateTimePickerButton(
                   onTap: () {},
-                  title: "Rent duration",
+                  title: "Huurduur",
                   startDate: widget.startDate,
                   endDate: widget.endDate,
                   textTitle: const Text(
-                    'Rent duration',
+                    'Huurduur',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
@@ -117,7 +118,7 @@ class _OrderVehicleState extends State<OrderVehicle> {
                 ),
               ),
               const Text(
-                " / total",
+                " / totaal",
                 style: TextStyle(
                   fontSize: 14,
                   color: AppColors.blackColor,
@@ -129,7 +130,7 @@ class _OrderVehicleState extends State<OrderVehicle> {
             onPressed: () {
               _createOrderProceedToPayment(context);
             },
-            btnText: "Proceed to Payment",
+            btnText: "Ga door naar betaling",
             width: size.width * 0.5,
           ),
         ],
@@ -138,75 +139,77 @@ class _OrderVehicleState extends State<OrderVehicle> {
   }
 
   void _showOrderLimitDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Order Limit Reached'),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              SvgPicture.asset('assets/images/attention.png'), // Replace with your SVG asset
-              const SizedBox(height: 20),
-              const Text('We are sorry, but you cannot order more than 2 vehicles at the same time.'),
-            ],
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Bestelslimiet bereikt'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                SvgPicture.asset(
+                    'assets/images/attention.png'), // Replace with your SVG asset
+                const SizedBox(height: 20),
+                const Text(
+                    'Het spijt ons, maar u kunt niet meer dan 2 voertuigen tegelijkertijd bestellen.'),
+              ],
+            ),
           ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('OK'),
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
+          actions: <Widget>[
+            TextButton(
+              child: const Text('ok'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _createOrderProceedToPayment(BuildContext context) async {
-  try {
-    final ordersService = OrdersService();
-    final result = await ordersService.createOrder(
-      vehicleId: widget.vehicle.id,
-      rentalStartDate: widget.startDate,
-      rentalEndDate: widget.endDate,
-    );
-    final checkoutUrl = result['checkoutUrl'];
+    try {
+      final ordersService = OrdersService();
+      final result = await ordersService.createOrder(
+        vehicleId: widget.vehicle.id,
+        rentalStartDate: widget.startDate,
+        rentalEndDate: widget.endDate,
+      );
+      final checkoutUrl = result['checkoutUrl'];
 
-    // ignore: use_build_context_synchronously
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => WebviewScreen(
-          url: checkoutUrl,
-          navigationDelegate: orderPaymentRedirect(context: context),
-          title: "Order payment",
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WebviewScreen(
+            url: checkoutUrl,
+            navigationDelegate: orderPaymentRedirect(context: context),
+            title: "Bestelbetaling",
+          ),
         ),
-      ),
-    );
-  } catch (error) {
-    logger(error);
+      );
+    } catch (error) {
+      logger(error);
 
-    if (error is DioError) {
-      // Check if the error is specifically about the order limit
-      if (error.response?.data?.contains("You can have only 2 active or pending orders at max") == true) {
-        // ignore: use_build_context_synchronously
-        _showOrderLimitDialog(context);
-      } else if (error.response?.statusCode == 404) {
-        // Handle 404 error
-        // Show an appropriate message to the user
+      if (error is DioError) {
+        // Check if the error is specifically about the order limit
+        if (error.response?.data?.contains(
+                "U kunt maximaal slechts 2 actieve of hangende bestellingen hebben") ==
+            true) {
+          // ignore: use_build_context_synchronously
+          _showOrderLimitDialog(context);
+        } else if (error.response?.statusCode == 404) {
+          // Handle 404 error
+          // Show an appropriate message to the user
+        } else {
+          // Handle other types of DioErrors
+        }
       } else {
-        // Handle other types of DioErrors
+        // Handle non-DioErrors
       }
-    } else {
-      // Handle non-DioErrors
     }
   }
-}
-
 
   void _showCustomDialog(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -227,13 +230,13 @@ class _OrderVehicleState extends State<OrderVehicle> {
                 color: Colors.red, size: 64),
             const SizedBox(height: 16),
             const Center(
-              child: Text('We are sorry.. :(',
+              child: Text('We vinden het jammer.. :(',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 8),
             const Center(
               child: Text(
-                'You cannot order more than 2 vehicles at the same time.',
+                'U kunt niet meer dan 2 voertuigen tegelijkertijd bestellen.',
                 textAlign: TextAlign.center,
               ),
             ),
@@ -241,7 +244,7 @@ class _OrderVehicleState extends State<OrderVehicle> {
             PrimaryButton(
               width: screenSize.width * 0.7, // Adjust width as needed
               height: 50,
-              btnText: 'Ok',
+              btnText: 'OK',
               onPressed: () {
                 Navigator.of(context).pushReplacementNamed("/home");
               },

@@ -51,13 +51,13 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
               const TextStyle(fontSize: 12.0), // Adjust as needed
           items: [
             _customBottomNavItem(
-                iconPath: 'assets/svg/home.svg', label: 'Home'),
+                iconPath: 'assets/svg/home.svg', label: 'Thuis'),
             _customBottomNavItem(
-                iconPath: 'assets/svg/messages.svg', label: 'Messages'),
+                iconPath: 'assets/svg/messages.svg', label: 'Berichten'),
             _customBottomNavItem(
-                iconPath: 'assets/svg/rentals.svg', label: 'My Rentals'),
+                iconPath: 'assets/svg/rentals.svg', label: 'Mijn huur'),
             _customBottomNavItem(
-                iconPath: 'assets/svg/profile.svg', label: 'Profile'),
+                iconPath: 'assets/svg/profile.svg', label: 'Profiel'),
           ],
         ),
       ),

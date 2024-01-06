@@ -105,7 +105,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
         logger('Error sending message: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error sending message: $e'),
+            content: Text('foutHetVerzendenVanBericht: $e'),
           ),
         );
       }

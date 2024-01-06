@@ -18,7 +18,7 @@ class _MyRentalsScreenState extends State<MyRentalsScreen> {
       child: Scaffold(
         appBar: buildAppBarForPage(
           context: context,
-          title: 'My Rentals',
+          title: 'Mijn huur',
         ),
         body: Container(
           decoration: const BoxDecoration(
@@ -44,12 +44,12 @@ class _MyRentalsScreenState extends State<MyRentalsScreen> {
                   labelColor: Colors.white,
                   unselectedLabelColor: AppColors.primaryColor,
                   tabs: [
-                    _customTab("All"),
-                    _customTab("Active"),
-                    _customTab("Completed"),
-                    _customTab("Pending"),
-                    _customTab("Canceled"),
-                    _customTab("Rejected"),
+                    _customTab("Alle"),
+                    _customTab("Actief"),
+                    _customTab("Voltooid"),
+                    _customTab("In behandeling"),
+                    _customTab("Geannuleerd"),
+                    _customTab("Afgewezen"),
                   ],
                 ),
                 const Expanded(

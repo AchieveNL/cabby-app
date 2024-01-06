@@ -45,7 +45,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  "Yeah!",
+                  "Ja!",
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 24,
@@ -55,7 +55,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  "Your order has been successfully added",
+                  "Uw bestelling is succesvol toegevoegd",
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 16,
@@ -70,7 +70,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
             width: screenSize.width * 0.9,
             height: 50,
             isLoading: isButtonLoading,
-            btnText: "Continue",
+            btnText: "Doorgaan",
             onPressed: () {},
           ),
           const SizedBox(height: 20),

@@ -112,7 +112,7 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
     logger(isDisabled);
 
     widget.btnCallback(
-      title: isDisabled ? 'Next' : 'Submit',
+      title: isDisabled ? 'Volgende' : 'Indienen',
       isDisabled: isDisabled,
     );
   }
@@ -123,17 +123,17 @@ class _DriverLicenceScreenState extends State<DriverLicenceScreen> {
       child: Column(
         children: <Widget>[
           ..._buildSection(
-              "BSN number",
+              "BSN nummer",
               buildTextField(
                 controller: bsnNumberController,
                 keyboardType: TextInputType.text,
-                label: 'BSN number',
+                label: 'BSN nummer',
               )),
           ..._buildSection(
-              "Driver's License expire date", buildDatePickerWidget()),
-          ..._buildSection("Driver's License photo (front side)",
+              "Het rijbewijs vervalt datum", buildDatePickerWidget()),
+          ..._buildSection("Rijbewijs foto (voorkant)",
               _buildLicenseContainer(driverLicenseFront, 'front')),
-          ..._buildSection("Driver's License photo (Back side)",
+          ..._buildSection("Rijsebewijs foto (achterkant)",
               _buildLicenseContainer(driverLicenseBack, 'back')),
         ],
       ),

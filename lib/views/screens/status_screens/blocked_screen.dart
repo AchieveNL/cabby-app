@@ -31,7 +31,7 @@ class BlockedScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             const Text(
-              "Your account has been blocked",
+              "Uw account is geblokkeerd",
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 24,

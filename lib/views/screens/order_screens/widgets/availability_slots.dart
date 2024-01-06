@@ -43,7 +43,7 @@ Widget buildAvailabilityList({
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'from',
+                    'van',
                     style: TextStyle(
                       fontSize: 13,
                     ),
@@ -57,7 +57,7 @@ Widget buildAvailabilityList({
                     ),
                   ),
                   const Text(
-                    'to',
+                    'naar',
                     style: TextStyle(
                       fontSize: 13,
                     ),

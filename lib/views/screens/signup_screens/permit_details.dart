@@ -84,7 +84,7 @@ class _PermitDetailsState extends State<PermitDetails> {
             });
             validateForm();
           },
-          name: "Taxi permission photo",
+          name: "Taxi -toestemmingsfoto",
         ),
       ),
     );
@@ -124,7 +124,7 @@ class _PermitDetailsState extends State<PermitDetails> {
       },
       style: const TextStyle(color: AppColors.blackColor, fontSize: 14),
       decoration: DecorationInputs.textBoxInputDecorationWithSuffixIcon(
-        label: 'Expiry Date (dd/MM/yyyy)',
+        label: 'Vervaldatum (dd/MM/yyyy)',
         suffixIcon: const Icon(Icons.calendar_today_outlined,
             color: AppColors.blackColor, size: 18),
       ),
@@ -133,7 +133,7 @@ class _PermitDetailsState extends State<PermitDetails> {
 
   void validateForm() {
     bool isFormValid = taxiPermitFile != null;
-    widget.btnCallback(title: "Next", isDisabled: !isFormValid);
+    widget.btnCallback(title: "Volgende", isDisabled: !isFormValid);
 
     SignupPermitDetails data = SignupPermitDetails()
       ..taxiPermitFile = taxiPermitFile
@@ -147,9 +147,9 @@ class _PermitDetailsState extends State<PermitDetails> {
       child: Column(
         children: <Widget>[
           ..._buildSection(
-              "Taxi permission expire date", buildDatePickerWidget()),
+              "Vervaldatum taxivergunning", buildDatePickerWidget()),
           ..._buildSection(
-              "Taxi permission photo", _buildLicenseContainer(taxiPermitFile)),
+              "Foto taxivergunning", _buildLicenseContainer(taxiPermitFile)),
         ],
       ),
     );
@@ -226,7 +226,7 @@ class _PermitDetailsState extends State<PermitDetails> {
                 children: [
                   SvgPicture.asset('assets/camera.svg'),
                   const SizedBox(width: 10),
-                  const Text('Take an image',
+                  const Text('Maak een foto',
                       style: TextStyle(
                           color: AppColors.primaryColor,
                           fontWeight: FontWeight.w700,

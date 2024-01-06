@@ -22,7 +22,7 @@ Widget buildDamageReportsCard(BuildContext context, String id) {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "View all damage reports",
+              "Bekijk alle schaderapporten",
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 16,

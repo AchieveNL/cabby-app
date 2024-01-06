@@ -80,7 +80,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Verify OTP',
+                'Controleer OTP',
                 style: TextStyle(
                     color: AppColors.whiteColor,
                     fontSize: 22,
@@ -88,7 +88,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               ),
               SizedBox(height: 10),
               Text(
-                'Enter the 4-digit code sent to your email.',
+                'Voer de 4-cijferige code in die naar uw e-mail is verzonden.',
                 style: TextStyle(color: AppColors.whiteColor, fontSize: 16),
               ),
             ],
@@ -127,7 +127,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       controller: otpController,
       keyboardType: TextInputType.number,
       validator: (value) {
-        if (value!.length != 4) return 'Enter a 4-digit code';
+        if (value!.length != 4) return 'Voer een 4-cijferige code in';
         return null;
       },
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -144,7 +144,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         PrimaryButton(
           width: screenSize.width * 0.9,
           height: 50,
-          btnText: 'Verify OTP',
+          btnText: 'Controleer OTP',
           isLoading: isLoading,
           onPressed: onVerifyOTP,
         ),
@@ -152,7 +152,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         GestureDetector(
           onTap: () => Navigator.of(context).pop(),
           child: const Text(
-            'Back to Login',
+            'Terug naar Inloggen',
             style: TextStyle(
               fontFamily: "SF Cartoonist Hand",
               fontSize: 14,

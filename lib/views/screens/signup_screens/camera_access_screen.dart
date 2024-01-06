@@ -18,7 +18,7 @@ class CameraAccessScreen extends StatelessWidget {
     } else {
       // Handle denial of permission or provide info to user.
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Camera permission is required!")));
+          const SnackBar(content: Text("Cameramotor is vereist!")));
     }
   }
 
@@ -56,7 +56,7 @@ class CameraAccessScreen extends StatelessWidget {
             ),
             const SizedBox(height: 40),
             Text(
-              "Allow Camera Access",
+              "Camera toegang toestaan",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -65,7 +65,7 @@ class CameraAccessScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              "When prompted, you must enable camera access to continue.",
+              "Wanneer u wordt gevraagd, moet u de toegang tot de camera inschakelen om door te gaan.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -74,14 +74,14 @@ class CameraAccessScreen extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              "We can't verify you without your camera",
+              "We kunnen u niet verifieren zonder uw camera",
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 40),
             PrimaryButton(
               width: screenSize.width * 0.9,
               height: 50,
-              btnText: "Turn on camera",
+              btnText: "Zet de camera aan",
               onPressed: () {
                 _requestCameraPermission(context);
               },

@@ -31,7 +31,7 @@ class RejectedScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             const Text(
-              "Your account has been rejected",
+              "Uw account is afgewezen",
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 24,
@@ -42,7 +42,7 @@ class RejectedScreen extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
-                "Unfortunately, your account application has been rejected. Please contact the admin for more details.",
+                "Helaas is uw accountaanvraag afgewezen. Neem contact op met de beheerder voor meer informatie.",
                 textAlign: TextAlign.justify,
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
@@ -59,7 +59,7 @@ class RejectedScreen extends StatelessWidget {
                 onPressed: () {
                   AuthService(context).signOut();
                 },
-                btnText: "Sign out",
+                btnText: "Afmelden",
               ),
             ),
           ],
