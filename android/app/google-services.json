@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "46803388955",
+    "project_id": "cabby-60c8c",
+    "storage_bucket": "cabby-60c8c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:46803388955:android:910b7e51824595765106be",
+        "android_client_info": {
+          "package_name": "com.cabbyrentals.cabby"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNtQYHAUYp5nOXrafqNY593nlMWFva1lY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:46803388955:android:553f55079a1d23615106be",
+        "android_client_info": {
+          "package_name": "nl.cabbyrentals.cabby"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNtQYHAUYp5nOXrafqNY593nlMWFva1lY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
