@@ -1,9 +1,12 @@
+import 'dart:ffi';
+
 import 'package:cabby/config/theme.dart';
 import 'package:cabby/data/data.dart';
 import 'package:cabby/models/signup.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class ProfileDetails extends StatefulWidget {
@@ -26,7 +29,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   late TextEditingController firstNameController;
   late TextEditingController lastNameController;
   late TextEditingController phoneController;
-  late TextEditingController zipController;
+  late TextEditingController zipNumberController;
+  late TextEditingController zipLetterController;
   late TextEditingController streetController;
   late TextEditingController locationController;
   late TextEditingController dobController;
@@ -45,7 +49,10 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     lastNameController =
         TextEditingController(text: widget.profileData.lastName);
     phoneController = TextEditingController(text: widget.profileData.phone);
-    zipController = TextEditingController(text: widget.profileData.zip);
+    zipNumberController =
+        TextEditingController(text: widget.profileData.zip?.substring(0, 4));
+    zipLetterController =
+        TextEditingController(text: widget.profileData.zip?.substring(4, 6));
     streetController = TextEditingController(text: widget.profileData.street);
     locationController =
         TextEditingController(text: widget.profileData.location);
@@ -60,7 +67,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     // Now add listeners
     firstNameController.addListener(validateForm);
     phoneController.addListener(validateForm);
-    zipController.addListener(validateForm);
+    zipNumberController.addListener(validateForm);
+    zipLetterController.addListener(validateForm);
     streetController.addListener(validateForm);
     locationController.addListener(validateForm);
     dobController.addListener(validateForm);
@@ -111,10 +119,29 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           buildSpace(),
           buildLabel('Postcode'),
           buildSpace(),
-          buildTextField(
-            controller: zipController,
-            keyboardType: TextInputType.text,
-            label: 'Postcode',
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 2.4,
+                child: buildPostCode(
+                  controller: zipNumberController,
+                  keyboardType: TextInputType.number,
+                  maxLength: 4,
+                  label: '0000',
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 2.4,
+                child: buildPostCode(
+                  controller: zipLetterController,
+                  filter: FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                  keyboardType: TextInputType.text,
+                  maxLength: 2,
+                  label: 'XX',
+                ),
+              ),
+            ],
           ),
           buildSpace(),
           buildLabel('Straat'),
@@ -143,6 +170,27 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   }) {
     return TextFormField(
       controller: controller,
+      keyboardType: keyboardType,
+      onTap: onTap,
+      style: const TextStyle(color: AppColors.blackColor, fontSize: 16),
+      decoration: DecorationInputs.textBoxInputDecoration(label: label),
+    );
+  }
+
+  Widget buildPostCode({
+    required TextEditingController controller,
+    required TextInputType keyboardType,
+    required String label,
+    int? maxLength,
+    TextInputFormatter? filter,
+    Function()? onTap,
+  }) {
+    return TextFormField(
+      controller: controller,
+      inputFormatters: [
+        filter ?? FilteringTextInputFormatter.digitsOnly,
+      ],
+      maxLength: maxLength,
       keyboardType: keyboardType,
       onTap: onTap,
       style: const TextStyle(color: AppColors.blackColor, fontSize: 16),
@@ -313,7 +361,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
     bool isFormValid = firstNameController.text.isNotEmpty &&
         lastNameController.text.isNotEmpty &&
-        zipController.text.isNotEmpty &&
+        zipNumberController.text.isNotEmpty &&
+        zipLetterController.text.isNotEmpty &&
         streetController.text.isNotEmpty &&
         locationController.text.isNotEmpty &&
         dobController.text.isNotEmpty;
@@ -329,7 +378,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       ..dob = selectedDate
       ..phone = phoneController.text
       ..city = locationController.text
-      ..zip = zipController.text
+      ..zip = zipNumberController.text + zipLetterController.text
       ..street = streetController.text
       ..location = selectedCity;
 
@@ -340,8 +389,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   void dispose() {
     firstNameController.dispose();
     phoneController.dispose();
-    zipController.dispose();
+    zipNumberController.dispose();
     streetController.dispose();
+    zipLetterController.dispose();
     locationController.dispose();
     dobController.dispose();
     super.dispose();
