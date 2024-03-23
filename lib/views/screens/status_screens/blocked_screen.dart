@@ -42,7 +42,7 @@ class BlockedScreen extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
-                "Your account has been blocked due to violations. Please contact the admin for more details.",
+                "Je account is geblokkeerd vanwege overtredingen. Neem voor meer informatie contact op met de beheerder.",
                 textAlign: TextAlign.justify,
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
