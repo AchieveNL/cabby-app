@@ -228,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       try {
         final response = await userService.login(
-          emailController.text,
+          emailController.text.toLowerCase(),
           passwordController.text,
         );
 
