@@ -156,7 +156,7 @@ String? validateMobileNumberLength(String? value) {
 
 String? validatePasswordLength(String? value) {
   if (value!.length < 8) {
-    return 'Minimum length must be 8 characters';
+    return 'De minimale lengte moet 8 tekens zijn.';
   }
   return null;
 }
@@ -164,7 +164,7 @@ String? validatePasswordLength(String? value) {
 String? validatePassword(String? value) {
   RegExp passValid = RegExp(r"(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)");
   if (value!.length < 8) {
-    return 'Password must be at least 8 characters';
+    return 'De minimale lengte moet 8 tekens zijn.';
   }
   if (!passValid.hasMatch(value)) {
     return "Password should contain Capital letter, Small letter, Number & Special character";
