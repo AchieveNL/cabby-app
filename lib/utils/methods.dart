@@ -164,7 +164,7 @@ String? validatePasswordLength(String? value) {
 String? validatePassword(String? value) {
   RegExp passValid = RegExp(r"(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)");
   if (value!.length < 8) {
-    return 'Password must be at least 8 characters';
+    return 'Voer minimaal 8 tekens in.';
   }
   if (!passValid.hasMatch(value)) {
     return "Password should contain Capital letter, Small letter, Number & Special character";
@@ -202,7 +202,7 @@ String? validateEmail(String? value) {
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
   RegExp regex = RegExp(pattern);
   if (!regex.hasMatch(value!)) {
-    return 'Gelieve een geldig e-mailadres in te voeren.';
+    return 'Voer een geldig e-mailadres in.';
   }
   return null;
 }
