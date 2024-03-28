@@ -10,6 +10,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart' as provider;
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 var loggerLn = Logger();
@@ -217,7 +218,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: Text(
-          '🤔 Nog geen berichten. \nLaat een bericht achter en wij proberen u zo snel mogelijk te helpen! 🚀',
+          'Reacties kunnen tot 48 uur duren. \n Wees concreet en duidelijk zodat we je behoeftes begrijpen. \n \n Klik alleen op de SOS knop bij nood en je wordt direct doorgeschakeld. \n \n Wij zijn hier om te helpen!',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16.0,
@@ -259,22 +260,52 @@ class _MessagesScreenState extends State<MessagesScreen> {
         SizedBox(height: screenSize.height * 0.1),
         Padding(
           padding: const EdgeInsets.only(left: 15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Hi $name,',
-                style:
-                    const TextStyle(color: AppColors.whiteColor, fontSize: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Hi $name,',
+                    style: const TextStyle(
+                        color: AppColors.whiteColor, fontSize: 16),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Hoe kan ik je helpen?',
+                    style: TextStyle(
+                        color: AppColors.whiteColor,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ],
               ),
-              const SizedBox(height: 10),
-              const Text(
-                'Hoe kan ik je helpen?',
-                style: TextStyle(
-                    color: AppColors.whiteColor,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600),
-              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: InkWell(
+                  onTap: () {
+                    launchUrl(Uri.parse("tel: (+20) 215 77 78"));
+                  },
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: const BoxDecoration(
+                      color: AppColors.redColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "SOS",
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),
