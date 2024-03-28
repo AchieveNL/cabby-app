@@ -57,6 +57,15 @@ class _FilterScreenState extends State<FilterScreen> {
     return AppBar(
       backgroundColor: AppColors.primaryLightColor, // Changed to white
       elevation: 0,
+      title: const Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: Text(
+          'Zoeken',
+          style: TextStyle(
+              fontWeight: FontWeight.w700, color: AppColors.whiteColor),
+        ),
+      ),
+      centerTitle: true,
       leading: Padding(
         padding: const EdgeInsets.only(top: 10),
         child: GestureDetector(
