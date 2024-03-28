@@ -7,6 +7,7 @@ import 'package:cabby/views/widgets/buttons/buttons.dart';
 import 'package:cabby/views/widgets/decoration.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 class HomeFilterCard extends StatefulWidget {
@@ -70,14 +71,18 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
             ),
             const SizedBox(height: 24),
             buildTextField(
-              controller: carSelectorController,
-              keyboardType: TextInputType.text,
-              label: "Alle auto's",
-              onTap: _showModalCarSelector,
-              prefixIcon: const Icon(
-                CupertinoIcons.car_fill,
-              ),
-            ),
+                controller: carSelectorController,
+                keyboardType: TextInputType.text,
+                label: "Alle auto's",
+                onTap: _showModalCarSelector,
+                prefixIcon: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: SvgPicture.asset(
+                    'assets/svg/car_icon.svg',
+                    height: 18,
+                    width: 16,
+                  ),
+                )),
             const SizedBox(height: 15),
             Row(
               children: [
@@ -186,11 +191,15 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
       },
       style: const TextStyle(color: AppColors.blackColor, fontSize: 14),
       decoration: DecorationInputs.textBoxInputDecorationWithPrefixWidget(
-        label: 'dd/mm/yyyy',
-        prefix: const Icon(
-          Icons.calendar_today_outlined,
-        ),
-      ),
+          label: 'dd/mm/yyyy',
+          prefix: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: SvgPicture.asset(
+              'assets/svg/calendar.svg',
+              height: 24,
+              width: 24,
+            ),
+          )),
     );
   }
 
@@ -228,11 +237,15 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
       },
       style: const TextStyle(color: AppColors.blackColor, fontSize: 14),
       decoration: DecorationInputs.textBoxInputDecorationWithPrefixWidget(
-        label: 'Ophaaltijd',
-        prefix: const Icon(
-          CupertinoIcons.clock,
-        ),
-      ),
+          label: 'Ophaaltijd',
+          prefix: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: SvgPicture.asset(
+              'assets/svg/clock.svg',
+              width: 24,
+              height: 24,
+            ),
+          )),
     );
   }
 
@@ -322,9 +335,15 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
       },
       style: const TextStyle(color: AppColors.blackColor, fontSize: 14),
       decoration: DecorationInputs.textBoxInputDecorationWithPrefixWidget(
-        label: 'Number',
-        prefix: const Icon(Icons.restore),
-      ),
+          label: 'Number',
+          prefix: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: SvgPicture.asset(
+              'assets/svg/reset.svg',
+              height: 24,
+              width: 24,
+            ),
+          )),
     );
   }
 
@@ -361,9 +380,15 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
       },
       style: const TextStyle(color: AppColors.blackColor, fontSize: 14),
       decoration: DecorationInputs.textBoxInputDecorationWithPrefixWidget(
-        label: 'Type',
-        prefix: const Icon(Icons.tune),
-      ),
+          label: 'Type',
+          prefix: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: SvgPicture.asset(
+              'assets/svg/Tune.svg',
+              height: 24,
+              width: 24,
+            ),
+          )),
     );
   }
 
